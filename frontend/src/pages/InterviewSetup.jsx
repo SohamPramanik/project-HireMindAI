@@ -1,40 +1,43 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
-import "./InterviewSetup.css";
 
 function InterviewSetup() {
   const navigate = useNavigate();
 
   const [role, setRole] = useState("");
-  const [level, setLevel] = useState("");
+  const [difficulty, setDifficulty] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleStart = async () => {
-    if (!role || !level) {
-      setError("Please select both a role and difficulty level.");
+  const handleStart = async (e) => {
+    e.preventDefault();
+
+    if (!role || !difficulty) {
+      setError("Please select both role and difficulty.");
       return;
     }
 
     try {
-      setLoading(true);
       setError("");
+      setLoading(true);
 
       const res = await API.post("/interview", {
         role,
-        difficulty: level,
+        difficulty,
       });
+
+      console.log("Interview created:", res.data);
 
       const interviewId = res.data.interview._id;
 
       navigate(`/interview/${interviewId}`);
     } catch (err) {
-      console.error(err);
+      console.error("Create interview error:", err);
 
       setError(
         err.response?.data?.message ||
-          "Unable to create interview. Please try again.",
+          "Failed to create interview. Please try again.",
       );
     } finally {
       setLoading(false);
@@ -42,14 +45,13 @@ function InterviewSetup() {
   };
 
   return (
-    <div className="interview-setup">
-      <div className="setup-card">
+    <div className="setup-page">
+      <div className="setup-container">
         <div className="setup-header">
-          <span className="setup-eyebrow">AI INTERVIEW SIMULATOR</span>
+          <span className="eyebrow">AI INTERVIEW SIMULATOR</span>
 
           <h1>
-            Build your
-            <span> interview.</span>
+            Build your <span className="gradient">interview.</span>
           </h1>
 
           <p>
@@ -58,58 +60,81 @@ function InterviewSetup() {
           </p>
         </div>
 
-        <div className="setup-form">
-          <div className="field">
-            <label htmlFor="role">Interview Role</label>
+        <div className="setup-card">
+          <form onSubmit={handleStart}>
+            <div className="setup-field">
+              <label htmlFor="role">Interview Role</label>
 
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="">Select your role</option>
+              <select
+                id="role"
+                value={role}
+                onChange={(e) => setRole(e.target.value)}
+                className="setup-select"
+              >
+                <option value="">Select your role</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Full Stack Developer">
+                  Full Stack Developer
+                </option>
+                <option value="MERN Stack Developer">
+                  MERN Stack Developer
+                </option>
+                <option value="Java Developer">Java Developer</option>
+                <option value="Python Developer">Python Developer</option>
+              </select>
+            </div>
 
-              <option value="Backend Developer">Backend Developer</option>
+            <div className="setup-field">
+              <label htmlFor="difficulty">Difficulty</label>
 
-              <option value="Frontend Developer">Frontend Developer</option>
+              <select
+                id="difficulty"
+                value={difficulty}
+                onChange={(e) => setDifficulty(e.target.value)}
+                className="setup-select"
+              >
+                <option value="">Select difficulty</option>
+                <option value="Beginner">Beginner</option>
+                <option value="Intermediate">Intermediate</option>
+                <option value="Advanced">Advanced</option>
+              </select>
+            </div>
 
-              <option value="Full Stack Developer">Full Stack Developer</option>
+            {error && (
+              <div className="setup-error" role="alert">
+                {error}
+              </div>
+            )}
 
-              <option value="MERN Stack Developer">MERN Stack Developer</option>
+            <button type="submit" className="setup-button" disabled={loading}>
+              {loading ? (
+                "Generating interview..."
+              ) : (
+                <>
+                  Generate AI Interview
+                  <span>→</span>
+                </>
+              )}
+            </button>
+          </form>
+        </div>
 
-              <option value="Java Developer">Java Developer</option>
-
-              <option value="Python Developer">Python Developer</option>
-            </select>
+        <div className="setup-features">
+          <div>
+            <span>✦</span>
+            AI-generated questions
           </div>
 
-          <div className="field">
-            <label htmlFor="difficulty">Difficulty</label>
-
-            <select
-              id="difficulty"
-              value={level}
-              onChange={(e) => setLevel(e.target.value)}
-            >
-              <option value="">Select difficulty</option>
-
-              <option value="Beginner">Beginner</option>
-
-              <option value="Intermediate">Intermediate</option>
-
-              <option value="Advanced">Advanced</option>
-            </select>
+          <div>
+            <span>✦</span>
+            Difficulty-based interview
           </div>
 
-          {error && <div className="setup-error">{error}</div>}
-
-          <button
-            className="generate-btn"
-            onClick={handleStart}
-            disabled={loading}
-          >
-            {loading ? "Generating interview..." : "Generate AI Interview →"}
-          </button>
+          <div>
+            <span>✦</span>
+            Instant AI evaluation
+          </div>
         </div>
       </div>
     </div>

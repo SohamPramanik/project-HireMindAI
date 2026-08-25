@@ -5,7 +5,6 @@ const questionSchema = new mongoose.Schema(
     question: {
       type: String,
       required: true,
-      trim: true,
     },
 
     answer: {
@@ -16,8 +15,6 @@ const questionSchema = new mongoose.Schema(
     score: {
       type: Number,
       default: null,
-      min: 0,
-      max: 10,
     },
 
     feedback: {
@@ -40,7 +37,9 @@ const questionSchema = new mongoose.Schema(
       default: [],
     },
   },
-  { _id: true },
+  {
+    _id: true,
+  },
 );
 
 const interviewSchema = new mongoose.Schema(
@@ -54,13 +53,11 @@ const interviewSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-      trim: true,
     },
 
     difficulty: {
       type: String,
       required: true,
-      trim: true,
     },
 
     questions: {
@@ -76,8 +73,6 @@ const interviewSchema = new mongoose.Schema(
     totalScore: {
       type: Number,
       default: 0,
-      min: 0,
-      max: 10,
     },
 
     status: {

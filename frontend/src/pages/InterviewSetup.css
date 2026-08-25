@@ -1,71 +1,182 @@
-/* =========================================================
-   INTERVIEW SETUP
-   Fully scoped to avoid global CSS conflicts
-   ========================================================= */
-
-.interview-setup-page {
+.interviewSetupPage {
   min-height: 100vh;
-  width: 100%;
+  position: relative;
+  overflow: hidden;
 
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
 
-  padding: 50px 24px;
+  padding: 120px 24px 70px;
 
-  background:
-    radial-gradient(
-      circle at 12% 10%,
-      rgba(108, 82, 230, 0.07),
-      transparent 32%
-    ),
-    radial-gradient(
-      circle at 90% 90%,
-      rgba(108, 82, 230, 0.055),
-      transparent 35%
-    ),
-    #f8f9fc;
+  background: #f8f9fc;
+  color: #171925;
+}
 
-  color: #171927;
+/* ================================
+   BACKGROUND
+================================ */
+
+.interviewSetupGlow {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  filter: blur(2px);
+}
+
+.interviewSetupGlowOne {
+  width: 520px;
+  height: 520px;
+
+  top: -280px;
+  left: -180px;
+
+  background: rgba(108, 78, 220, 0.08);
+}
+
+.interviewSetupGlowTwo {
+  width: 500px;
+  height: 500px;
+
+  right: -250px;
+  bottom: -260px;
+
+  background: rgba(108, 78, 220, 0.06);
+}
+
+/* ================================
+   MAIN CONTAINER
+================================ */
+
+.setupContainer {
+  width: min(850px, 100%);
+  position: relative;
+  z-index: 1;
+}
+
+/* ================================
+   HEADER
+================================ */
+
+.setupHeader {
+  text-align: center;
+  margin-bottom: 38px;
+}
+
+.setupEyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+
+  padding: 8px 13px;
+
+  border: 1px solid rgba(108, 78, 220, 0.18);
+  border-radius: 999px;
+
+  background: rgba(108, 78, 220, 0.05);
+
+  color: #6950d8;
+
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+}
+
+.eyebrowDot {
+  width: 7px;
+  height: 7px;
+
+  border-radius: 50%;
+
+  background: #7054df;
+
+  box-shadow: 0 0 0 4px rgba(112, 84, 223, 0.1);
+}
+
+.setupHeader h1 {
+  margin-top: 20px;
 
   font-family: "Inter", sans-serif;
+  font-size: clamp(40px, 5vw, 58px);
+  line-height: 1.05;
+  font-weight: 750;
+
+  letter-spacing: -0.045em;
+
+  color: #171925;
 }
 
-/* =========================================================
-   WRAPPER
-   ========================================================= */
-
-.interview-setup-wrapper {
-  width: 100%;
-  max-width: 520px;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+.setupHeader h1 span {
+  color: #6b50dc;
 }
 
-/* =========================================================
-   BRAND
-   ========================================================= */
+.setupHeader p {
+  max-width: 570px;
 
-.setup-brand {
+  margin: 18px auto 0;
+
+  color: #747a8b;
+
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+/* ================================
+   CARD
+================================ */
+
+.setupCard {
+  background: rgba(255, 255, 255, 0.92);
+
+  border: 1px solid rgba(24, 29, 45, 0.08);
+
+  border-radius: 18px;
+
+  padding: 34px;
+
+  box-shadow:
+    0 30px 80px rgba(26, 30, 50, 0.09),
+    0 8px 25px rgba(26, 30, 50, 0.04);
+
+  backdrop-filter: blur(15px);
+}
+
+/* ================================
+   CARD HEADER
+================================ */
+
+.setupCardTop {
   display: flex;
-  align-items: center;
-  gap: 11px;
+  align-items: flex-start;
+  justify-content: space-between;
 
-  margin-bottom: 28px;
+  padding-bottom: 28px;
 
-  color: #171927;
+  border-bottom: 1px solid #eceef4;
+}
 
-  font-size: 21px;
+.setupCardTop h2 {
+  margin: 0;
+
+  font-family: "Inter", sans-serif;
+
+  font-size: 20px;
   font-weight: 700;
 
-  letter-spacing: -0.02em;
+  color: #171925;
 }
 
-.setup-brand-icon {
-  width: 40px;
-  height: 40px;
+.setupCardTop p {
+  margin-top: 7px;
+
+  color: #8a8f9e;
+
+  font-size: 14px;
+}
+
+.setupIcon {
+  width: 42px;
+  height: 42px;
 
   display: flex;
   align-items: center;
@@ -73,361 +184,282 @@
 
   border-radius: 11px;
 
-  background: #6c52e6;
+  background: #f0edff;
 
-  color: #ffffff;
+  color: #7054df;
 
-  font-size: 18px;
-
-  box-shadow: 0 8px 22px rgba(108, 82, 230, 0.2);
+  font-size: 20px;
 }
 
-/* =========================================================
-   CARD
-   ========================================================= */
+/* ================================
+   FIELDS
+================================ */
 
-.interview-setup-card {
-  width: 100%;
+.setupFields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
 
-  padding: 42px 44px;
+  gap: 20px;
 
-  background: #ffffff;
-
-  border: 1px solid #e7e9f0;
-
-  border-radius: 15px;
-
-  box-shadow: 0 24px 60px rgba(25, 30, 55, 0.08);
+  margin-top: 30px;
 }
 
-/* =========================================================
-   HEADER
-   ========================================================= */
-
-.setup-header {
-  margin-bottom: 32px;
-}
-
-.setup-eyebrow {
-  display: inline-flex;
-
-  margin-bottom: 13px;
-
-  color: #6c52e6;
-
-  font-size: 11px;
-  font-weight: 700;
-
-  letter-spacing: 0.13em;
-
-  text-transform: uppercase;
-}
-
-.setup-header h1 {
-  margin: 0 0 11px;
-
-  color: #171927;
-
-  font-family: "Inter", sans-serif;
-
-  font-size: 30px;
-  line-height: 1.2;
-
-  font-weight: 700;
-
-  letter-spacing: -0.035em;
-}
-
-.setup-header p {
-  margin: 0;
-
-  max-width: 420px;
-
-  color: #73788a;
-
-  font-size: 14px;
-  line-height: 1.65;
-
-  font-weight: 400;
-}
-
-/* =========================================================
-   FORM
-   ========================================================= */
-
-.setup-form {
-  display: flex;
-  flex-direction: column;
-
-  gap: 21px;
-}
-
-/* =========================================================
-   FIELD
-   ========================================================= */
-
-.setup-field {
+.setupField {
   display: flex;
   flex-direction: column;
 }
 
-.setup-field label {
-  margin-bottom: 8px;
+.setupField label {
+  margin-bottom: 9px;
 
-  color: #252837;
+  color: #282c39;
 
   font-size: 13px;
-
-  font-weight: 600;
+  font-weight: 650;
 }
 
-/* =========================================================
-   SELECT
-   ========================================================= */
-
-.select-wrapper {
-  position: relative;
-
+.setupField select {
   width: 100%;
-}
 
-.select-wrapper::after {
-  content: "⌄";
+  height: 52px;
 
-  position: absolute;
-
-  right: 15px;
-  top: 50%;
-
-  transform: translateY(-53%);
-
-  color: #777c8d;
-
-  font-size: 17px;
-
-  pointer-events: none;
-}
-
-.select-wrapper select {
-  width: 100%;
-  height: 50px;
-
-  padding: 0 42px 0 14px;
-
-  appearance: none;
-  -webkit-appearance: none;
+  padding: 0 15px;
 
   border: 1px solid #dfe2ea;
-  border-radius: 8px;
+  border-radius: 10px;
 
   background: #ffffff;
 
-  color: #252837;
+  color: #252936;
 
   font-family: "Inter", sans-serif;
-
   font-size: 14px;
+
+  cursor: pointer;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
+
+.setupField select:hover {
+  border-color: #bdb7e8;
+}
+
+.setupField select:focus {
+  border-color: #7054df;
+
+  box-shadow: 0 0 0 4px rgba(112, 84, 223, 0.1);
 
   outline: none;
-
-  cursor: pointer;
-
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
 }
 
-.select-wrapper select:hover {
-  border-color: #c9cdd8;
-}
+/* ================================
+   ERROR
+================================ */
 
-.select-wrapper select:focus {
-  border-color: #6c52e6;
-
-  box-shadow: 0 0 0 3px rgba(108, 82, 230, 0.1);
-}
-
-.select-wrapper select:invalid {
-  color: #9da2b0;
-}
-
-/* =========================================================
-   PREVIEW
-   ========================================================= */
-
-.setup-preview {
+.setupError {
   display: flex;
   align-items: center;
-
-  gap: 13px;
-
-  padding: 14px;
-
-  border: 1px solid #ebeaf5;
-
-  border-radius: 9px;
-
-  background: #faf9ff;
-}
-
-.preview-icon {
-  flex-shrink: 0;
-
-  width: 34px;
-  height: 34px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  border-radius: 9px;
-
-  background: #eeeaff;
-
-  color: #6c52e6;
-
-  font-size: 15px;
-}
-
-.setup-preview div:last-child {
-  display: flex;
-  flex-direction: column;
-
-  gap: 3px;
-}
-
-.setup-preview strong {
-  color: #252837;
-
-  font-size: 13px;
-
-  font-weight: 600;
-}
-
-.setup-preview span {
-  color: #858a9a;
-
-  font-size: 11px;
-
-  line-height: 1.5;
-}
-
-/* =========================================================
-   SUBMIT BUTTON
-   ========================================================= */
-
-.interview-setup-page .setup-submit {
-  width: 100%;
-  height: 50px;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
   gap: 10px;
 
-  padding: 0 18px;
+  margin-top: 20px;
 
-  border: 1px solid #6c52e6 !important;
-  border-radius: 8px;
+  padding: 12px 14px;
 
-  background: #6c52e6 !important;
-  background-color: #6c52e6 !important;
+  border: 1px solid #f0d1d1;
+  border-radius: 9px;
 
-  color: #ffffff !important;
+  background: #fff6f6;
+
+  color: #b44949;
+
+  font-size: 13px;
+}
+
+.setupError span {
+  width: 20px;
+  height: 20px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #c95b5b;
+
+  color: white;
+
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* ================================
+   BUTTON
+================================ */
+
+.generateInterviewBtn {
+  width: 100%;
+
+  height: 54px;
+
+  margin-top: 28px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+
+  border: none;
+  border-radius: 10px;
+
+  background: #6b50dc;
+  color: white;
 
   font-family: "Inter", sans-serif;
 
   font-size: 14px;
-  font-weight: 600;
-
-  line-height: 1;
+  font-weight: 700;
 
   cursor: pointer;
 
   transition:
-    background-color 0.2s ease,
-    border-color 0.2s ease,
     transform 0.2s ease,
+    background 0.2s ease,
     box-shadow 0.2s ease;
 }
 
-.interview-setup-page .setup-submit:hover {
-  background: #5b43d0 !important;
-  background-color: #5b43d0 !important;
+.generateInterviewBtn:hover:not(:disabled) {
+  background: #5e45cd;
 
-  border-color: #5b43d0 !important;
+  transform: translateY(-2px);
 
-  color: #ffffff !important;
-
-  transform: translateY(-1px);
-
-  box-shadow: 0 10px 24px rgba(108, 82, 230, 0.22);
+  box-shadow: 0 12px 25px rgba(107, 80, 220, 0.25);
 }
 
-.interview-setup-page .setup-submit:active {
-  background: #513bbd !important;
-  background-color: #513bbd !important;
-
+.generateInterviewBtn:active:not(:disabled) {
   transform: translateY(0);
-
-  box-shadow: none;
 }
 
-.setup-arrow {
-  font-size: 18px;
+.generateInterviewBtn:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
 
+.arrow {
+  font-size: 20px;
   line-height: 1;
-
-  transition: transform 0.2s ease;
 }
 
-.setup-submit:hover .setup-arrow {
-  transform: translateX(3px);
+/* ================================
+   LOADING SPINNER
+================================ */
+
+.spinner {
+  width: 17px;
+  height: 17px;
+
+  border: 2px solid rgba(255, 255, 255, 0.35);
+  border-top-color: white;
+
+  border-radius: 50%;
+
+  animation: setupSpin 0.7s linear infinite;
 }
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+@keyframes setupSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 
-.setup-footer {
-  margin: 22px 0 0;
+/* ================================
+   FOOTER FEATURES
+================================ */
 
-  color: #858a9a;
+.setupFooter {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
 
-  font-size: 11px;
+  gap: 24px;
 
-  line-height: 1.5;
+  margin-top: 24px;
 
+  color: #858a99;
+
+  font-size: 12px;
+}
+
+.setupFooter > div {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.check {
+  width: 17px;
+  height: 17px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #e9f7ef;
+
+  color: #4c9b6c;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* ================================
+   NOTE
+================================ */
+
+.setupNote {
   text-align: center;
+
+  margin-top: 24px;
+
+  color: #9296a4;
+
+  font-size: 12px;
 }
 
-/* =========================================================
+.setupNote span {
+  color: #7054df;
+  margin-right: 5px;
+}
+
+/* ================================
    RESPONSIVE
-   ========================================================= */
+================================ */
 
-@media (max-width: 560px) {
-  .interview-setup-page {
-    padding: 35px 18px;
+@media (max-width: 700px) {
+  .interviewSetupPage {
+    padding: 100px 16px 50px;
   }
 
-  .interview-setup-card {
-    padding: 34px 24px;
-
-    border-radius: 12px;
+  .setupHeader h1 {
+    font-size: 40px;
   }
 
-  .setup-header h1 {
-    font-size: 26px;
-  }
-}
-
-@media (max-width: 380px) {
-  .interview-setup-card {
-    padding: 30px 20px;
+  .setupCard {
+    padding: 24px;
   }
 
-  .setup-header h1 {
-    font-size: 24px;
+  .setupFields {
+    grid-template-columns: 1fr;
+  }
+
+  .setupFooter {
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
   }
 }

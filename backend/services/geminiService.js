@@ -1,10 +1,22 @@
-const { GoogleGenAI } = require("@google/genai");
+import "dotenv/config";
+import { GoogleGenAI } from "@google/genai";
 
 const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-async function generateInterviewQuestions(role, difficulty) {
+const cleanJSON = (text) => {
+  return text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
+};
+
+// =========================================
+// GENERATE INTERVIEW QUESTIONS
+// =========================================
+
+export const generateInterviewQuestions = async (role, difficulty) => {
   const prompt = `
 You are an expert technical interviewer.
 
@@ -21,9 +33,10 @@ Requirements:
 - Cover different important concepts.
 - Avoid duplicate questions.
 - Do not provide answers.
+- Questions should be practical and interview-oriented.
 - Return ONLY valid JSON.
 
-Return this exact structure:
+Return exactly this structure:
 
 {
   "questions": [
@@ -41,15 +54,16 @@ Return this exact structure:
 
   const text = response.text;
 
-  const cleaned = text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
+  const cleaned = cleanJSON(text);
 
   return JSON.parse(cleaned);
-}
+};
 
-async function evaluateAnswer(role, difficulty, question, answer) {
+// =========================================
+// EVALUATE ANSWER
+// =========================================
+
+export const evaluateAnswer = async (role, difficulty, question, answer) => {
   const prompt = `
 You are an expert technical interviewer.
 
@@ -67,7 +81,7 @@ ${answer}
 
 Evaluate the candidate's answer.
 
-Return ONLY valid JSON using this exact structure:
+Return ONLY valid JSON using exactly this structure:
 
 {
   "score": 0,
@@ -78,11 +92,15 @@ Return ONLY valid JSON using this exact structure:
 }
 
 Rules:
-- score must be between 0 and 10.
-- Evaluate correctness and technical understanding.
-- Do not give credit for incorrect technical claims.
+- score must be a number between 0 and 10.
+- Evaluate technical correctness.
+- Evaluate understanding of the concept.
+- Evaluate completeness.
+- Do not give credit for technically incorrect claims.
 - Keep feedback constructive.
-- strengths, weaknesses and improvements should contain concise strings.
+- strengths must contain concise strings.
+- weaknesses must contain concise strings.
+- improvements must contain concise strings.
 `;
 
   const response = await ai.models.generateContent({
@@ -92,15 +110,7 @@ Rules:
 
   const text = response.text;
 
-  const cleaned = text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
+  const cleaned = cleanJSON(text);
 
   return JSON.parse(cleaned);
-}
-
-module.exports = {
-  generateInterviewQuestions,
-  evaluateAnswer,
 };
