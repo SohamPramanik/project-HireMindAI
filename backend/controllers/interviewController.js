@@ -1,37 +1,71 @@
 import Interview from "../models/Interview.js";
-import { generateQuestions } from "../services/geminiService.js";
-import { evaluateAnswer } from "../services/evaluateAnswer.js";
-import { generateSummary } from "../services/interviewSummary.js";
 
-export const generateInterview = async (req, res) => {
+import {
+  generateInterviewQuestions,
+  evaluateAnswer,
+} from "../services/geminiService.js";
+
+// ==========================================
+// CREATE INTERVIEW
+// ==========================================
+
+export const createInterview = async (req, res) => {
   try {
-    const { role, level } = req.body;
+    const { role, difficulty } = req.body;
 
-    const data = await generateQuestions(role, level);
+    if (!role || !difficulty) {
+      return res.status(400).json({
+        message: "Role and difficulty are required",
+      });
+    }
+
+    const generated = await generateInterviewQuestions(role, difficulty);
+
+    if (
+      !generated ||
+      !generated.questions ||
+      generated.questions.length === 0
+    ) {
+      return res.status(500).json({
+        message: "Gemini failed to generate interview questions",
+      });
+    }
 
     const interview = await Interview.create({
       user: req.user._id,
       role,
-      level,
-      questions: data.questions,
+      difficulty,
+      questions: generated.questions,
+      currentQuestion: 0,
+      totalScore: 0,
+      status: "in-progress",
     });
 
     res.status(201).json({
-      success: true,
-      interviewId: interview._id,
+      message: "Interview created successfully",
+      interview,
     });
   } catch (error) {
-    console.error(error);
+    console.error("Create interview error:", error);
 
     res.status(500).json({
-      message: error.message,
+      message: "Failed to create interview",
     });
   }
 };
+
+// ==========================================
+// GET INTERVIEW
+// ==========================================
 
 export const getInterview = async (req, res) => {
   try {
-    const interview = await Interview.findById(req.params.id);
+    const { id } = req.params;
+
+    const interview = await Interview.findOne({
+      _id: id,
+      user: req.user._id,
+    });
 
     if (!interview) {
       return res.status(404).json({
@@ -39,19 +73,46 @@ export const getInterview = async (req, res) => {
       });
     }
 
-    res.status(200).json(interview);
+    res.status(200).json({
+      interview,
+    });
   } catch (error) {
+    console.error("Get interview error:", error);
+
     res.status(500).json({
-      message: error.message,
+      message: "Failed to fetch interview",
     });
   }
 };
 
+// ==========================================
+// SUBMIT ANSWER
+// ==========================================
+
 export const submitAnswer = async (req, res) => {
   try {
-    const { questionId, answer } = req.body;
+    const { id } = req.params;
+    const { questionIndex, answer } = req.body;
 
-    const interview = await Interview.findById(req.params.id);
+    // -----------------------------
+    // Validation
+    // -----------------------------
+
+    if (
+      questionIndex === undefined ||
+      questionIndex === null ||
+      !answer ||
+      !answer.trim()
+    ) {
+      return res.status(400).json({
+        message: "Question index and answer are required",
+      });
+    }
+
+    const interview = await Interview.findOne({
+      _id: id,
+      user: req.user._id,
+    });
 
     if (!interview) {
       return res.status(404).json({
@@ -59,77 +120,117 @@ export const submitAnswer = async (req, res) => {
       });
     }
 
-    // Find the question
-    const question = interview.questions.find((q) => q.id === questionId);
+    // -----------------------------
+    // Check interview status
+    // -----------------------------
 
-    if (!question) {
-      return res.status(404).json({
-        message: "Question not found",
+    if (interview.status === "completed") {
+      return res.status(400).json({
+        message: "Interview is already completed",
       });
     }
 
-    // Evaluate using Gemini
-    const result = await evaluateAnswer(question.question, answer);
+    // -----------------------------
+    // Get question
+    // -----------------------------
 
-    // Save the result
-    question.answer = answer;
-    question.score = result.score;
-    question.feedback = result.feedback;
-    question.idealAnswer = result.idealAnswer;
+    const question = interview.questions[questionIndex];
+
+    if (!question) {
+      return res.status(400).json({
+        message: "Invalid question",
+      });
+    }
+
+    // -----------------------------
+    // Prevent duplicate submission
+    // -----------------------------
+
+    if (question.answer && question.score !== null) {
+      return res.status(400).json({
+        message: "This question has already been answered",
+      });
+    }
+
+    // -----------------------------
+    // Gemini evaluation
+    // -----------------------------
+
+    const evaluation = await evaluateAnswer(
+      interview.role,
+      interview.difficulty,
+      question.question,
+      answer.trim(),
+    );
+
+    // -----------------------------
+    // Save evaluation
+    // -----------------------------
+
+    question.answer = answer.trim();
+    question.score = Number(evaluation.score);
+    question.feedback = evaluation.feedback || "";
+
+    question.strengths = Array.isArray(evaluation.strengths)
+      ? evaluation.strengths
+      : [];
+
+    question.weaknesses = Array.isArray(evaluation.weaknesses)
+      ? evaluation.weaknesses
+      : [];
+
+    question.improvements = Array.isArray(evaluation.improvements)
+      ? evaluation.improvements
+      : [];
+
+    // -----------------------------
+    // Calculate average score
+    // -----------------------------
+
+    const answeredQuestions = interview.questions.filter(
+      (q) => q.score !== null,
+    );
+
+    const total = answeredQuestions.reduce((sum, q) => sum + q.score, 0);
+
+    interview.totalScore =
+      answeredQuestions.length > 0
+        ? Number((total / answeredQuestions.length).toFixed(2))
+        : 0;
+
+    // -----------------------------
+    // Update current question
+    // -----------------------------
+
+    interview.currentQuestion = questionIndex + 1;
+
+    // -----------------------------
+    // Complete interview
+    // -----------------------------
+
+    if (questionIndex === interview.questions.length - 1) {
+      interview.status = "completed";
+    }
 
     await interview.save();
 
     res.status(200).json({
-      success: true,
-      result,
+      message: "Answer evaluated successfully",
+
+      evaluation,
+
+      interview: {
+        id: interview._id,
+        currentQuestion: interview.currentQuestion,
+        totalScore: interview.totalScore,
+        status: interview.status,
+      },
     });
   } catch (error) {
-    console.error(error);
+    console.error("Answer evaluation error:", error);
 
     res.status(500).json({
-      message: error.message,
-    });
-  }
-};
-
-export const finishInterview = async (req, res) => {
-  try {
-    const interview = await Interview.findById(req.params.id);
-
-    if (!interview) {
-      return res.status(404).json({
-        message: "Interview not found",
-      });
-    }
-
-    let total = 0;
-
-    interview.questions.forEach((q) => {
-      total += q.score || 0;
-    });
-
-    const average = total / interview.questions.length;
-
-    const summary = await generateSummary(interview.questions);
-
-    interview.status = "Completed";
-    interview.totalScore = total;
-    interview.averageScore = average;
-    interview.overallFeedback = summary.overallFeedback;
-
-    await interview.save();
-
-    res.json({
-      success: true,
-      totalScore: total,
-      averageScore: average,
-      overallFeedback: summary.overallFeedback,
-    });
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      message: error.message,
+      message: "Failed to evaluate answer",
     });
   }
 };

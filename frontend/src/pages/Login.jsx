@@ -1,21 +1,26 @@
 import { useState, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { ArrowRight, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 import API from "../services/api";
 import { AuthContext } from "../context/AuthContext";
 
+import "./Login.css";
+
 export default function Login() {
   const navigate = useNavigate();
-
   const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
     setError("");
     setLoading(true);
 
@@ -26,192 +31,158 @@ export default function Login() {
       });
 
       login(res.data.token, res.data.user);
+
       navigate("/dashboard");
     } catch (err) {
-      setError(err.response?.data?.message || "We couldn't sign you in. Please try again.");
+      setError(
+        err.response?.data?.message ||
+          "We couldn't sign you in. Please check your credentials.",
+      );
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "24px",
-        background:
-          "radial-gradient(circle at top left, rgba(184,147,90,0.08), transparent 45%), radial-gradient(circle at bottom right, rgba(184,147,90,0.05), transparent 45%), #0b0c0f",
-        fontFamily: "'Inter', sans-serif",
-      }}
-    >
-      <div
-        style={{
-          width: "420px",
-          maxWidth: "100%",
-          background: "rgba(255,255,255,0.035)",
-          backdropFilter: "blur(18px)",
-          border: "1px solid rgba(255,255,255,0.09)",
-          padding: "44px 40px",
-          borderRadius: "10px",
-          color: "#f2efe9",
-          boxShadow: "0 20px 48px rgba(0,0,0,0.45)",
-        }}
-      >
-        <p
-          style={{
-            textAlign: "center",
-            fontFamily: "'Playfair Display', serif",
-            fontSize: "26px",
-            fontWeight: 700,
-            letterSpacing: "-0.01em",
-            marginBottom: "8px",
-          }}
-        >
-          HireMind
-        </p>
+    <div className="login-page">
+      {/* LEFT BRAND PANEL */}
 
-        <h1
-          style={{
-            textAlign: "center",
-            fontSize: "17px",
-            fontWeight: 400,
-            color: "#9b968e",
-            marginBottom: "34px",
-          }}
-        >
-          Sign in to continue your practice
-        </h1>
+      <div className="login-brand">
+        <Link to="/" className="login-brand-logo">
+          <div className="brand-icon">H</div>
 
-        <form
-          onSubmit={handleLogin}
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "18px",
-          }}
-        >
-          <div>
-            <label
-              htmlFor="email"
-              style={{
-                display: "block",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "#9b968e",
-                marginBottom: "8px",
-              }}
-            >
-              Email address
-            </label>
-            <input
-              id="email"
-              type="email"
-              placeholder="you@company.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              style={{
-                width: "100%",
-                padding: "13px 14px",
-                borderRadius: "6px",
-                border: "1px solid rgba(255,255,255,0.09)",
-                background: "rgba(255,255,255,0.03)",
-                color: "#f2efe9",
-                fontSize: "15px",
-                fontFamily: "inherit",
-              }}
-            />
+          <span>
+            HireMind <b>AI</b>
+          </span>
+        </Link>
+
+        <div className="brand-content">
+          <span className="brand-eyebrow">
+            AI-POWERED INTERVIEW PREPARATION
+          </span>
+
+          <h1>
+            Practice smarter.
+            <br />
+            <span>Interview better.</span>
+          </h1>
+
+          <p>
+            Build confidence through realistic AI interviews, personalized
+            feedback, and focused preparation.
+          </p>
+
+          <div className="brand-features">
+            <div>
+              <ShieldCheck size={18} />
+              Secure & private
+            </div>
+
+            <div>
+              <ShieldCheck size={18} />
+              AI-powered feedback
+            </div>
+          </div>
+        </div>
+
+        <p className="brand-footer">© 2026 HireMind AI</p>
+      </div>
+
+      {/* RIGHT LOGIN AREA */}
+
+      <div className="login-area">
+        <div className="login-card">
+          <div className="mobile-logo">
+            <div className="brand-icon">H</div>
+
+            <span>
+              HireMind <b>AI</b>
+            </span>
           </div>
 
-          <div>
-            <label
-              htmlFor="password"
-              style={{
-                display: "block",
-                fontSize: "13px",
-                fontWeight: 500,
-                color: "#9b968e",
-                marginBottom: "8px",
-              }}
-            >
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-              style={{
-                width: "100%",
-                padding: "13px 14px",
-                borderRadius: "6px",
-                border: "1px solid rgba(255,255,255,0.09)",
-                background: "rgba(255,255,255,0.03)",
-                color: "#f2efe9",
-                fontSize: "15px",
-                fontFamily: "inherit",
-              }}
-            />
+          <div className="login-header">
+            <span className="login-label">WELCOME BACK</span>
+
+            <h2>Sign in to your account</h2>
+
+            <p>Continue your interview preparation journey.</p>
           </div>
 
-          {error && (
-            <p
-              role="alert"
-              style={{
-                fontSize: "14px",
-                color: "#c98a80",
-                margin: 0,
-              }}
+          <form className="login-form" onSubmit={handleLogin}>
+            {/* EMAIL */}
+
+            <div className="form-group">
+              <label htmlFor="email">Email address</label>
+
+              <input
+                id="email"
+                type="email"
+                placeholder="you@example.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            {/* PASSWORD */}
+
+            <div className="form-group">
+              <div className="password-label">
+                <label htmlFor="password">Password</label>
+
+                <button
+                  type="button"
+                  className="forgot-btn"
+                  onClick={() => alert("Password reset coming soon.")}
+                >
+                  Forgot password?
+                </button>
+              </div>
+
+              <div className="password-wrapper">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  required
+                />
+
+                <button
+                  type="button"
+                  className="password-toggle"
+                  onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
+            </div>
+
+            {/* ERROR */}
+
+            {error && <div className="login-error">{error}</div>}
+
+            {/* SUBMIT */}
+
+            <button
+              type="submit"
+              className="login-submit-button"
+              disabled={loading}
             >
-              {error}
-            </p>
-          )}
+              {loading ? "Signing in..." : "Sign in"}
+            </button>
+          </form>
 
-          <button
-            type="submit"
-            disabled={loading}
-            style={{
-              padding: "14px",
-              borderRadius: "6px",
-              border: "1px solid #b8935a",
-              background: loading ? "rgba(184,147,90,0.5)" : "#b8935a",
-              color: "#17140d",
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-              cursor: loading ? "not-allowed" : "pointer",
-              fontSize: "16px",
-              marginTop: "8px",
-              transition: "0.3s ease",
-            }}
-          >
-            {loading ? "Signing in…" : "Sign in"}
-          </button>
-        </form>
+          {/* REGISTER */}
 
-        <p
-          style={{
-            marginTop: "28px",
-            textAlign: "center",
-            fontSize: "14px",
-            color: "#9b968e",
-          }}
-        >
-          Don't have an account?{" "}
-          <Link
-            to="/register"
-            style={{
-              color: "#d9bb85",
-              fontWeight: 500,
-            }}
-          >
-            Create one
-          </Link>
-        </p>
+          <div className="register-prompt">
+            <span>Don't have an account?</span>
+
+            <Link to="/register">Create an account</Link>
+          </div>
+        </div>
       </div>
     </div>
   );

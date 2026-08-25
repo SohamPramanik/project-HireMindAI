@@ -1,21 +1,22 @@
 import express from "express";
-import authMiddleware from "../middleware/authMiddleware.js";
 
 import {
-  generateInterview,
+  createInterview,
   getInterview,
   submitAnswer,
-  finishInterview,
 } from "../controllers/interviewController.js";
+
+import authMiddleware from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/generate", authMiddleware, generateInterview);
+// Create new interview
+router.post("/", authMiddleware, createInterview);
 
+// Get interview by ID
 router.get("/:id", authMiddleware, getInterview);
 
+// Submit answer
 router.post("/:id/answer", authMiddleware, submitAnswer);
-
-router.post("/:id/finish", authMiddleware, finishInterview);
 
 export default router;

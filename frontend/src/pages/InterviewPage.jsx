@@ -1,201 +1,291 @@
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+
+import API from "../services/api";
+
+import "./InterviewPage.css";
 
 function InterviewPage() {
-  const questions = [
-    {
-      question: "Explain REST API.",
-    },
-    {
-      question: "What is JWT?",
-    },
-    {
-      question: "Difference between SQL and NoSQL?",
-    },
-    {
-      question: "Explain Node.js Event Loop.",
-    },
-    {
-      question: "What is Middleware?",
-    },
-    {
-      question: "Difference between Authentication and Authorization?",
-    },
-    {
-      question: "Explain HTTP Status Codes.",
-    },
-    {
-      question: "What is MongoDB?",
-    },
-    {
-      question: "Difference between PUT and PATCH?",
-    },
-    {
-      question: "What is Express.js?",
-    },
-  ];
-  const [questionNo, setQuestionNo] = useState(1);
+  const { id } = useParams();
+  const navigate = useNavigate();
+
+  const [interview, setInterview] = useState(null);
+
+  const [questionIndex, setQuestionIndex] = useState(0);
 
   const [answer, setAnswer] = useState("");
 
-  const [submitted, setSubmitted] = useState(false);
+  const [evaluation, setEvaluation] = useState(null);
 
-  const submitAnswer = () => {
+  const [loading, setLoading] = useState(true);
+
+  const [submitting, setSubmitting] = useState(false);
+
+  const [error, setError] = useState("");
+
+  // ==========================================
+  // LOAD INTERVIEW
+  // ==========================================
+
+  useEffect(() => {
+    const loadInterview = async () => {
+      try {
+        setLoading(true);
+
+        const res = await API.get(`/interview/${id}`);
+
+        const data = res.data.interview;
+
+        setInterview(data);
+
+        setQuestionIndex(data.currentQuestion || 0);
+      } catch (err) {
+        console.error(err);
+
+        setError(err.response?.data?.message || "Unable to load interview.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadInterview();
+  }, [id]);
+
+  // ==========================================
+  // SUBMIT ANSWER
+  // ==========================================
+
+  const submitAnswer = async () => {
     if (!answer.trim()) {
-      alert("Please enter an answer.");
+      setError("Please write an answer before submitting.");
       return;
     }
 
-    // Backend API Later
+    try {
+      setSubmitting(true);
+      setError("");
 
-    setSubmitted(true);
+      const res = await API.post(`/interview/${id}/answer`, {
+        questionIndex,
+        answer,
+      });
+
+      setEvaluation(res.data.evaluation);
+
+      setInterview((prev) => ({
+        ...prev,
+
+        currentQuestion: res.data.interview.currentQuestion,
+
+        totalScore: res.data.interview.totalScore,
+
+        status: res.data.interview.status,
+      }));
+    } catch (err) {
+      console.error(err);
+
+      setError(
+        err.response?.data?.message || "Unable to evaluate your answer.",
+      );
+    } finally {
+      setSubmitting(false);
+    }
   };
+
+  // ==========================================
+  // NEXT QUESTION
+  // ==========================================
 
   const nextQuestion = () => {
-    if (questionNo === questions.length) return;
+    if (!interview || questionIndex >= interview.questions.length - 1) {
+      navigate(`/result/${id}`);
+      return;
+    }
 
-    setSubmitted(false);
+    setQuestionIndex((prev) => prev + 1);
+
     setAnswer("");
-    setQuestionNo(questionNo + 1);
+
+    setEvaluation(null);
+
+    setError("");
   };
 
+  // ==========================================
+  // LOADING
+  // ==========================================
+
+  if (loading) {
+    return (
+      <div className="interview-loading">
+        <div className="loader"></div>
+
+        <p>Preparing your AI interview...</p>
+      </div>
+    );
+  }
+
+  // ==========================================
+  // ERROR
+  // ==========================================
+
+  if (error && !interview) {
+    return (
+      <div className="interview-error">
+        <h2>Something went wrong</h2>
+
+        <p>{error}</p>
+
+        <button onClick={() => navigate("/dashboard")}>
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
+
+  if (!interview) return null;
+
+  const currentQuestion = interview.questions[questionIndex];
+
+  const progress = ((questionIndex + 1) / interview.questions.length) * 100;
+
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        background: "#0f172a",
-        color: "white",
-        padding: "40px",
-      }}
-    >
-      <h1>🤖 AI Interview</h1>
+    <div className="interview-page">
+      {/* HEADER */}
 
-      <p
-        style={{
-          color: "#94a3b8",
-          marginBottom: "30px",
-        }}
-      >
-        Question {questionNo} / 10
-      </p>
+      <header className="interview-header">
+        <div>
+          <span className="interview-eyebrow">LIVE AI INTERVIEW</span>
 
-      <div
-        style={{
-          background: "#1e293b",
-          padding: "30px",
-          borderRadius: "15px",
-        }}
-      >
-        <h2>{questions[questionNo - 1].question}</h2>
+          <h1>{interview.role}</h1>
 
-        <textarea
-          rows="8"
-          placeholder="Write your answer here..."
-          value={answer}
-          onChange={(e) => setAnswer(e.target.value)}
-          style={{
-            width: "100%",
-            marginTop: "25px",
-            padding: "15px",
-            borderRadius: "10px",
-            resize: "none",
-            fontSize: "16px",
-          }}
-        />
+          <p>{interview.difficulty} difficulty</p>
+        </div>
 
-        {!submitted ? (
-          <button
-            onClick={submitAnswer}
+        <div className="interview-score">
+          <span>Current Score</span>
+
+          <strong>{interview.totalScore.toFixed(1)}</strong>
+        </div>
+      </header>
+
+      {/* PROGRESS */}
+
+      <div className="progress-container">
+        <div className="progress-info">
+          <span>
+            Question {questionIndex + 1} / {interview.questions.length}
+          </span>
+
+          <span>{Math.round(progress)}%</span>
+        </div>
+
+        <div className="progress-track">
+          <div
+            className="progress-bar"
             style={{
-              marginTop: "20px",
-              padding: "14px 30px",
-              background: "#6366f1",
-              color: "white",
-              border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
+              width: `${progress}%`,
             }}
-          >
-            Submit Answer
-          </button>
-        ) : (
-          <>
-            <div
-              style={{
-                marginTop: "35px",
-                background: "#111827",
-                padding: "20px",
-                borderRadius: "10px",
-              }}
-            >
-              <h3>⭐ Score : 8 / 10</h3>
+          />
+        </div>
+      </div>
 
-              <br />
+      {/* QUESTION */}
 
-              <h3>💬 AI Feedback</h3>
+      <main className="interview-content">
+        <section className="question-card">
+          <span className="question-number">
+            QUESTION {String(questionIndex + 1).padStart(2, "0")}
+          </span>
 
-              <p
-                style={{
-                  color: "#cbd5e1",
-                }}
+          <h2>{currentQuestion.question}</h2>
+
+          {!evaluation && (
+            <>
+              <textarea
+                value={answer}
+                onChange={(e) => setAnswer(e.target.value)}
+                placeholder="Type your answer here..."
+                rows={9}
+                disabled={submitting}
+              />
+
+              {error && <div className="answer-error">{error}</div>}
+
+              <button
+                className="submit-answer-btn"
+                onClick={submitAnswer}
+                disabled={submitting}
               >
-                Great explanation. You correctly described JWT. You can also
-                mention Refresh Tokens.
-              </p>
+                {submitting ? "AI is evaluating..." : "Submit Answer →"}
+              </button>
+            </>
+          )}
 
-              <br />
+          {/* EVALUATION */}
 
-              <h3>📚 Ideal Answer</h3>
+          {evaluation && (
+            <div className="evaluation">
+              <div className="score-box">
+                <span>YOUR SCORE</span>
 
-              <p
-                style={{
-                  color: "#cbd5e1",
-                }}
-              >
-                JWT (JSON Web Token) is a secure token used for authentication
-                between client and server. It contains Header, Payload and
-                Signature.
-              </p>
+                <strong>
+                  {evaluation.score}
+                  <small>/10</small>
+                </strong>
+              </div>
+
+              <div className="feedback-section">
+                <h3>AI Feedback</h3>
+
+                <p>{evaluation.feedback}</p>
+              </div>
+
+              {evaluation.strengths?.length > 0 && (
+                <div className="feedback-list">
+                  <h3>Strengths</h3>
+
+                  <ul>
+                    {evaluation.strengths.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {evaluation.weaknesses?.length > 0 && (
+                <div className="feedback-list">
+                  <h3>Areas to Improve</h3>
+
+                  <ul>
+                    {evaluation.weaknesses.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {evaluation.improvements?.length > 0 && (
+                <div className="feedback-list">
+                  <h3>How to Improve</h3>
+
+                  <ul>
+                    {evaluation.improvements.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <button className="next-question-btn" onClick={nextQuestion}>
+                {questionIndex === interview.questions.length - 1
+                  ? "View Final Results →"
+                  : "Next Question →"}
+              </button>
             </div>
-
-            <button
-              onClick={nextQuestion}
-              style={{
-                marginTop: "20px",
-                padding: "14px 30px",
-                background: "#22c55e",
-                color: "white",
-                border: "none",
-                borderRadius: "10px",
-                cursor: "pointer",
-              }}
-            >
-              Next Question →
-            </button>
-          </>
-        )}
-      </div>
-
-      <div
-        style={{
-          marginTop: "30px",
-        }}
-      >
-        <Link to="/result/1">
-          <button
-            style={{
-              background: "#ef4444",
-              color: "white",
-              padding: "14px 30px",
-              border: "none",
-              borderRadius: "10px",
-              cursor: "pointer",
-            }}
-          >
-            Finish Interview
-          </button>
-        </Link>
-      </div>
+          )}
+        </section>
+      </main>
     </div>
   );
 }

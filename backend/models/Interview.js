@@ -1,30 +1,47 @@
 import mongoose from "mongoose";
 
-const questionSchema = new mongoose.Schema({
-  id: Number,
+const questionSchema = new mongoose.Schema(
+  {
+    question: {
+      type: String,
+      required: true,
+      trim: true,
+    },
 
-  question: String,
+    answer: {
+      type: String,
+      default: "",
+    },
 
-  answer: {
-    type: String,
-    default: "",
+    score: {
+      type: Number,
+      default: null,
+      min: 0,
+      max: 10,
+    },
+
+    feedback: {
+      type: String,
+      default: "",
+    },
+
+    strengths: {
+      type: [String],
+      default: [],
+    },
+
+    weaknesses: {
+      type: [String],
+      default: [],
+    },
+
+    improvements: {
+      type: [String],
+      default: [],
+    },
   },
-
-  score: {
-    type: Number,
-    default: 0,
-  },
-
-  feedback: {
-    type: String,
-    default: "",
-  },
-
-  idealAnswer: {
-    type: String,
-    default: "",
-  },
-});
+  { _id: true },
+);
 
 const interviewSchema = new mongoose.Schema(
   {
@@ -37,34 +54,36 @@ const interviewSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    level: {
+    difficulty: {
       type: String,
       required: true,
+      trim: true,
     },
 
-    status: {
-      type: String,
-      enum: ["Pending", "Completed"],
-      default: "Pending",
+    questions: {
+      type: [questionSchema],
+      default: [],
     },
 
-    questions: [questionSchema],
+    currentQuestion: {
+      type: Number,
+      default: 0,
+    },
 
     totalScore: {
       type: Number,
       default: 0,
+      min: 0,
+      max: 10,
     },
 
-    averageScore: {
-      type: Number,
-      default: 0,
-    },
-
-    overallFeedback: {
+    status: {
       type: String,
-      default: "",
+      enum: ["in-progress", "completed"],
+      default: "in-progress",
     },
   },
   {
