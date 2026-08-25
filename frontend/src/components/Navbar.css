@@ -1,0 +1,78 @@
+nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 22px 80px;
+
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+
+  background: rgba(11, 12, 15, 0.72);
+  backdrop-filter: blur(18px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.logo {
+  font-family: "Playfair Display", serif;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: #f2efe9;
+}
+
+.navLinks {
+  display: flex;
+  align-items: center;
+  gap: 40px;
+}
+
+.navLinks a {
+  text-decoration: none;
+  color: #d8d4cc;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: 0.3s ease;
+  position: relative;
+}
+
+.navLinks a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -6px;
+  width: 0;
+  height: 1px;
+  background: #b8935a;
+  transition: width 0.3s ease;
+}
+
+.navLinks a:hover {
+  color: #f2efe9;
+}
+
+.navLinks a:hover::after {
+  width: 100%;
+}
+
+.loginBtn {
+  background: transparent;
+  color: #f2efe9;
+  border: 1px solid #b8935a;
+  padding: 11px 26px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  transition: 0.3s ease;
+}
+
+.loginBtn:hover {
+  background: #b8935a;
+  color: #17140d;
+  transform: translateY(-2px);
+}

@@ -1,0 +1,196 @@
+/* ===========================
+   DASHBOARD
+=========================== */
+
+.dashboard {
+  min-height: 100vh;
+  background: #0f172a;
+  color: white;
+  padding: 40px 70px;
+}
+
+/* ===========================
+   HEADER
+=========================== */
+
+.dashboard-header {
+  margin-bottom: 40px;
+}
+
+.dashboard-header h1 {
+  font-size: 40px;
+  font-weight: 700;
+}
+
+.dashboard-header p {
+  margin-top: 10px;
+  color: #94a3b8;
+  font-size: 17px;
+}
+
+/* ===========================
+   STATS
+=========================== */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 25px;
+  margin-bottom: 45px;
+}
+
+.stat-card {
+  background: #1e293b;
+  border-radius: 18px;
+  padding: 28px;
+  transition: 0.3s;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 35px rgba(0,0,0,.35);
+}
+
+.stat-card h2 {
+  font-size: 42px;
+  color: #7c5cff;
+  margin-bottom: 8px;
+}
+
+.stat-card p {
+  color: #94a3b8;
+  font-size: 16px;
+}
+
+/* ===========================
+   START INTERVIEW
+=========================== */
+
+.start-card {
+  background: #1e293b;
+  border-radius: 20px;
+  padding: 35px;
+  margin-bottom: 40px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.start-card h2 {
+  font-size: 30px;
+}
+
+.start-card p {
+  margin: 18px 0 30px;
+  color: #94a3b8;
+  line-height: 1.7;
+}
+
+.start-btn {
+  background: linear-gradient(135deg,#7c5cff,#5b3fd1);
+  color: white;
+  border: none;
+  padding: 14px 30px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: .3s;
+}
+
+.start-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px rgba(124,92,255,.45);
+}
+
+/* ===========================
+   RECENT INTERVIEWS
+=========================== */
+
+.interview-table {
+  background: #1e293b;
+  border-radius: 20px;
+  padding: 30px;
+  border: 1px solid rgba(255,255,255,.06);
+}
+
+.interview-table h2 {
+  margin-bottom: 25px;
+}
+
+.interview-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.interview-table th {
+  text-align: left;
+  padding-bottom: 18px;
+  color: #94a3b8;
+  border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.interview-table td {
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(255,255,255,.05);
+}
+
+.interview-table tr:hover {
+  background: rgba(255,255,255,.02);
+}
+
+/* ===========================
+   EMPTY STATE
+=========================== */
+
+.empty {
+  text-align: center;
+  padding: 45px;
+  color: #94a3b8;
+  font-size: 17px;
+}
+
+/* ===========================
+   STATUS
+=========================== */
+
+.completed {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.pending {
+  color: #f59e0b;
+  font-weight: 600;
+}
+
+/* ===========================
+   RESPONSIVE
+=========================== */
+
+@media(max-width:768px){
+
+.dashboard{
+padding:30px 20px;
+}
+
+.dashboard-header h1{
+font-size:30px;
+}
+
+.stats{
+grid-template-columns:1fr;
+}
+
+.start-card{
+padding:25px;
+}
+
+.interview-table{
+overflow-x:auto;
+}
+
+table{
+min-width:650px;
+}
+
+}
