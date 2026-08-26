@@ -36,9 +36,7 @@ function InterviewPage() {
       } catch (err) {
         console.error("Load interview error:", err);
 
-        setError(
-          err.response?.data?.message || "Unable to load interview."
-        );
+        setError(err.response?.data?.message || "Unable to load interview.");
       } finally {
         setLoading(false);
       }
@@ -82,8 +80,7 @@ function InterviewPage() {
       console.error("Submit answer error:", err);
 
       setError(
-        err.response?.data?.message ||
-          "Unable to evaluate your answer."
+        err.response?.data?.message || "Unable to evaluate your answer.",
       );
     } finally {
       setSubmitting(false);
@@ -97,8 +94,7 @@ function InterviewPage() {
   const nextQuestion = () => {
     if (!interview) return;
 
-    const lastQuestion =
-      questionIndex >= interview.questions.length - 1;
+    const lastQuestion = questionIndex >= interview.questions.length - 1;
 
     if (lastQuestion) {
       navigate(`/result/${id}`);
@@ -169,80 +165,56 @@ function InterviewPage() {
   const currentQuestionNumber = questionIndex + 1;
 
   const progress =
-    totalQuestions > 0
-      ? (currentQuestionNumber / totalQuestions) * 100
-      : 0;
+    totalQuestions > 0 ? (currentQuestionNumber / totalQuestions) * 100 : 0;
 
   // Safety: make sure percentage is always between 0 and 100
-  const progressPercentage = Math.min(
-    100,
-    Math.max(0, progress)
-  );
+  const progressPercentage = Math.min(100, Math.max(0, progress));
 
   return (
     <div className="interview-page">
-
       {/* =================================================
           HEADER
       ================================================= */}
 
       <header className="interview-header">
-
         <div className="interview-title">
-
-          <span className="interview-eyebrow">
-            LIVE AI INTERVIEW
-          </span>
+          <span className="interview-eyebrow">LIVE AI INTERVIEW</span>
 
           <h1>{interview.role}</h1>
 
           <p>{interview.difficulty} difficulty</p>
-
         </div>
 
         <div className="interview-score">
-
           <span>Current Score</span>
 
-          <strong>
-            {Number(interview.totalScore || 0).toFixed(1)}
-          </strong>
+          <strong>{Number(interview.totalScore || 0).toFixed(1)}</strong>
 
           <small>/ 10</small>
-
         </div>
-
       </header>
 
       {/* =================================================
           PROGRESS
       ================================================= */}
 
-      <div className="interview-progress">
-
-        <div className="interview-progress-info">
-
+      <div className="progress-container">
+        <div className="progress-info">
           <span>
-            Question {currentQuestionNumber} / {totalQuestions}
+            Question {questionIndex + 1} / {interview.questions.length}
           </span>
 
-          <span>
-            {Math.round(progressPercentage)}%
-          </span>
-
+          <span>{Math.round(progress)}%</span>
         </div>
 
-        <div className="interview-progress-track">
-
+        <div className="progress-track">
           <div
-            className="interview-progress-fill"
+            className="progress-bar"
             style={{
-              width: `${progressPercentage}%`,
+              width: `${progress}%`,
             }}
-          />
-
+          ></div>
         </div>
-
       </div>
 
       {/* =================================================
@@ -250,12 +222,9 @@ function InterviewPage() {
       ================================================= */}
 
       <main className="interview-content">
-
         <section className="question-card">
-
           <span className="question-number">
-            QUESTION{" "}
-            {String(currentQuestionNumber).padStart(2, "0")}
+            QUESTION {String(currentQuestionNumber).padStart(2, "0")}
           </span>
 
           <h2>{currentQuestion.question}</h2>
@@ -266,10 +235,7 @@ function InterviewPage() {
 
           {!evaluation && (
             <div className="answer-area">
-
-              <label htmlFor="answer">
-                Your Answer
-              </label>
+              <label htmlFor="answer">Your Answer</label>
 
               <textarea
                 id="answer"
@@ -280,14 +246,9 @@ function InterviewPage() {
                 disabled={submitting}
               />
 
-              {error && (
-                <div className="answer-error">
-                  {error}
-                </div>
-              )}
+              {error && <div className="answer-error">{error}</div>}
 
               <div className="answer-actions">
-
                 <span className="answer-hint">
                   Take your time. Your answer will be evaluated by AI.
                 </span>
@@ -298,13 +259,9 @@ function InterviewPage() {
                   onClick={submitAnswer}
                   disabled={submitting}
                 >
-                  {submitting
-                    ? "AI is evaluating..."
-                    : "Submit Answer →"}
+                  {submitting ? "AI is evaluating..." : "Submit Answer →"}
                 </button>
-
               </div>
-
             </div>
           )}
 
@@ -314,62 +271,41 @@ function InterviewPage() {
 
           {evaluation && (
             <div className="evaluation">
-
               {/* SCORE */}
 
               <div className="evaluation-header">
-
                 <div>
+                  <span className="evaluation-eyebrow">AI EVALUATION</span>
 
-                  <span className="evaluation-eyebrow">
-                    AI EVALUATION
-                  </span>
-
-                  <h3>
-                    Here's how you performed
-                  </h3>
-
+                  <h3>Here's how you performed</h3>
                 </div>
 
                 <div className="evaluation-score">
-
-                  <strong>
-                    {evaluation.score}
-                  </strong>
+                  <strong>{evaluation.score}</strong>
 
                   <span>/10</span>
-
                 </div>
-
               </div>
 
               {/* FEEDBACK */}
 
               <div className="evaluation-section feedback-section">
-
                 <h3>Overall Feedback</h3>
 
                 <p>{evaluation.feedback}</p>
-
               </div>
 
               {/* STRENGTHS */}
 
               {evaluation.strengths?.length > 0 && (
                 <div className="evaluation-section evaluation-positive">
-
-                  <h3>
-                    ✓ What You Did Well
-                  </h3>
+                  <h3>✓ What You Did Well</h3>
 
                   <ul>
-                    {evaluation.strengths.map(
-                      (item, index) => (
-                        <li key={index}>{item}</li>
-                      )
-                    )}
+                    {evaluation.strengths.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
-
                 </div>
               )}
 
@@ -377,19 +313,13 @@ function InterviewPage() {
 
               {evaluation.weaknesses?.length > 0 && (
                 <div className="evaluation-section evaluation-negative">
-
-                  <h3>
-                    ✕ Mistakes / Areas to Improve
-                  </h3>
+                  <h3>✕ Mistakes / Areas to Improve</h3>
 
                   <ul>
-                    {evaluation.weaknesses.map(
-                      (item, index) => (
-                        <li key={index}>{item}</li>
-                      )
-                    )}
+                    {evaluation.weaknesses.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
-
                 </div>
               )}
 
@@ -397,19 +327,13 @@ function InterviewPage() {
 
               {evaluation.improvements?.length > 0 && (
                 <div className="evaluation-section">
-
-                  <h3>
-                    → How You Can Improve
-                  </h3>
+                  <h3>→ How You Can Improve</h3>
 
                   <ul>
-                    {evaluation.improvements.map(
-                      (item, index) => (
-                        <li key={index}>{item}</li>
-                      )
-                    )}
+                    {evaluation.improvements.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
                   </ul>
-
                 </div>
               )}
 
@@ -417,50 +341,33 @@ function InterviewPage() {
 
               {evaluation.idealAnswer && (
                 <div className="ideal-answer">
-
                   <div className="ideal-answer-header">
-
-                    <span>
-                      MODEL ANSWER
-                    </span>
-
+                    <span>MODEL ANSWER</span>
                   </div>
 
-                  <h3>
-                    A stronger answer would be:
-                  </h3>
+                  <h3>A stronger answer would be:</h3>
 
-                  <p>
-                    {evaluation.idealAnswer}
-                  </p>
-
+                  <p>{evaluation.idealAnswer}</p>
                 </div>
               )}
 
               {/* NEXT QUESTION */}
 
               <div className="next-question-wrapper">
-
                 <button
                   type="button"
                   className="next-question-btn"
                   onClick={nextQuestion}
                 >
-                  {questionIndex ===
-                  interview.questions.length - 1
+                  {questionIndex === interview.questions.length - 1
                     ? "View Final Results →"
                     : "Next Question →"}
                 </button>
-
               </div>
-
             </div>
           )}
-
         </section>
-
       </main>
-
     </div>
   );
 }
