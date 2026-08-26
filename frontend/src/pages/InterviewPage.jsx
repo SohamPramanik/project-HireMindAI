@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
 import API from "../services/api";
-
 import "./InterviewPage.css";
 
 function InterviewPage() {
@@ -10,37 +8,33 @@ function InterviewPage() {
   const navigate = useNavigate();
 
   const [interview, setInterview] = useState(null);
-
   const [questionIndex, setQuestionIndex] = useState(0);
 
   const [answer, setAnswer] = useState("");
-
   const [evaluation, setEvaluation] = useState(null);
 
   const [loading, setLoading] = useState(true);
-
   const [submitting, setSubmitting] = useState(false);
-
   const [error, setError] = useState("");
 
-  // ==========================================
+  // =====================================================
   // LOAD INTERVIEW
-  // ==========================================
+  // =====================================================
 
   useEffect(() => {
     const loadInterview = async () => {
       try {
         setLoading(true);
+        setError("");
 
         const res = await API.get(`/interview/${id}`);
 
         const data = res.data.interview;
 
         setInterview(data);
-
         setQuestionIndex(data.currentQuestion || 0);
       } catch (err) {
-        console.error(err);
+        console.error("Load interview error:", err);
 
         setError(err.response?.data?.message || "Unable to load interview.");
       } finally {
@@ -51,9 +45,9 @@ function InterviewPage() {
     loadInterview();
   }, [id]);
 
-  // ==========================================
+  // =====================================================
   // SUBMIT ANSWER
-  // ==========================================
+  // =====================================================
 
   const submitAnswer = async () => {
     if (!answer.trim()) {
@@ -64,25 +58,26 @@ function InterviewPage() {
     try {
       setSubmitting(true);
       setError("");
+      setEvaluation(null);
 
       const res = await API.post(`/interview/${id}/answer`, {
         questionIndex,
-        answer,
+        answer: answer.trim(),
       });
 
+      // Store AI evaluation
       setEvaluation(res.data.evaluation);
 
+      // Update interview data
       setInterview((prev) => ({
         ...prev,
-
         currentQuestion: res.data.interview.currentQuestion,
-
         totalScore: res.data.interview.totalScore,
-
         status: res.data.interview.status,
+        questions: res.data.interview.questions,
       }));
     } catch (err) {
-      console.error(err);
+      console.error("Submit answer error:", err);
 
       setError(
         err.response?.data?.message || "Unable to evaluate your answer.",
@@ -92,28 +87,29 @@ function InterviewPage() {
     }
   };
 
-  // ==========================================
+  // =====================================================
   // NEXT QUESTION
-  // ==========================================
+  // =====================================================
 
   const nextQuestion = () => {
-    if (!interview || questionIndex >= interview.questions.length - 1) {
+    if (!interview) return;
+
+    const lastQuestion = questionIndex >= interview.questions.length - 1;
+
+    if (lastQuestion) {
       navigate(`/result/${id}`);
       return;
     }
 
     setQuestionIndex((prev) => prev + 1);
-
     setAnswer("");
-
     setEvaluation(null);
-
     setError("");
   };
 
-  // ==========================================
+  // =====================================================
   // LOADING
-  // ==========================================
+  // =====================================================
 
   if (loading) {
     return (
@@ -125,9 +121,9 @@ function InterviewPage() {
     );
   }
 
-  // ==========================================
+  // =====================================================
   // ERROR
-  // ==========================================
+  // =====================================================
 
   if (error && !interview) {
     return (
@@ -143,15 +139,31 @@ function InterviewPage() {
     );
   }
 
-  if (!interview) return null;
+  if (!interview) {
+    return null;
+  }
 
   const currentQuestion = interview.questions[questionIndex];
+
+  if (!currentQuestion) {
+    return (
+      <div className="interview-error">
+        <h2>Question not found</h2>
+
+        <button onClick={() => navigate("/dashboard")}>
+          Back to Dashboard
+        </button>
+      </div>
+    );
+  }
 
   const progress = ((questionIndex + 1) / interview.questions.length) * 100;
 
   return (
     <div className="interview-page">
-      {/* HEADER */}
+      {/* =================================================
+          HEADER
+      ================================================= */}
 
       <header className="interview-header">
         <div>
@@ -165,11 +177,15 @@ function InterviewPage() {
         <div className="interview-score">
           <span>Current Score</span>
 
-          <strong>{interview.totalScore.toFixed(1)}</strong>
+          <strong>{Number(interview.totalScore || 0).toFixed(1)}</strong>
+
+          <small>/ 10</small>
         </div>
       </header>
 
-      {/* PROGRESS */}
+      {/* =================================================
+          PROGRESS
+      ================================================= */}
 
       <div className="progress-container">
         <div className="progress-info">
@@ -190,7 +206,9 @@ function InterviewPage() {
         </div>
       </div>
 
-      {/* QUESTION */}
+      {/* =================================================
+          QUESTION
+      ================================================= */}
 
       <main className="interview-content">
         <section className="question-card">
@@ -200,50 +218,77 @@ function InterviewPage() {
 
           <h2>{currentQuestion.question}</h2>
 
+          {/* =================================================
+              ANSWER AREA
+          ================================================= */}
+
           {!evaluation && (
-            <>
+            <div className="answer-area">
+              <label htmlFor="answer">Your Answer</label>
+
               <textarea
+                id="answer"
                 value={answer}
                 onChange={(e) => setAnswer(e.target.value)}
-                placeholder="Type your answer here..."
-                rows={9}
+                placeholder="Explain your answer clearly. Include examples, reasoning, and technical details where appropriate..."
+                rows={10}
                 disabled={submitting}
               />
 
               {error && <div className="answer-error">{error}</div>}
 
-              <button
-                className="submit-answer-btn"
-                onClick={submitAnswer}
-                disabled={submitting}
-              >
-                {submitting ? "AI is evaluating..." : "Submit Answer →"}
-              </button>
-            </>
+              <div className="answer-actions">
+                <span className="answer-hint">
+                  Take your time. Your answer will be evaluated by AI.
+                </span>
+
+                <button
+                  type="button"
+                  className="submit-answer-btn"
+                  onClick={submitAnswer}
+                  disabled={submitting}
+                >
+                  {submitting ? "AI is evaluating..." : "Submit Answer →"}
+                </button>
+              </div>
+            </div>
           )}
 
-          {/* EVALUATION */}
+          {/* =================================================
+              AI EVALUATION
+          ================================================= */}
 
           {evaluation && (
             <div className="evaluation">
-              <div className="score-box">
-                <span>YOUR SCORE</span>
+              {/* SCORE */}
 
-                <strong>
-                  {evaluation.score}
-                  <small>/10</small>
-                </strong>
+              <div className="evaluation-header">
+                <div>
+                  <span className="evaluation-eyebrow">AI EVALUATION</span>
+
+                  <h3>Here's how you performed</h3>
+                </div>
+
+                <div className="evaluation-score">
+                  <strong>{evaluation.score}</strong>
+
+                  <span>/10</span>
+                </div>
               </div>
 
-              <div className="feedback-section">
-                <h3>AI Feedback</h3>
+              {/* FEEDBACK */}
+
+              <div className="evaluation-section feedback-section">
+                <h3>Overall Feedback</h3>
 
                 <p>{evaluation.feedback}</p>
               </div>
 
+              {/* STRENGTHS */}
+
               {evaluation.strengths?.length > 0 && (
-                <div className="feedback-list">
-                  <h3>Strengths</h3>
+                <div className="evaluation-section evaluation-positive">
+                  <h3>✓ What You Did Well</h3>
 
                   <ul>
                     {evaluation.strengths.map((item, index) => (
@@ -253,9 +298,11 @@ function InterviewPage() {
                 </div>
               )}
 
+              {/* WEAKNESSES */}
+
               {evaluation.weaknesses?.length > 0 && (
-                <div className="feedback-list">
-                  <h3>Areas to Improve</h3>
+                <div className="evaluation-section evaluation-negative">
+                  <h3>✕ Mistakes / Areas to Improve</h3>
 
                   <ul>
                     {evaluation.weaknesses.map((item, index) => (
@@ -265,9 +312,11 @@ function InterviewPage() {
                 </div>
               )}
 
+              {/* IMPROVEMENTS */}
+
               {evaluation.improvements?.length > 0 && (
-                <div className="feedback-list">
-                  <h3>How to Improve</h3>
+                <div className="evaluation-section">
+                  <h3>→ How You Can Improve</h3>
 
                   <ul>
                     {evaluation.improvements.map((item, index) => (
@@ -277,7 +326,27 @@ function InterviewPage() {
                 </div>
               )}
 
-              <button className="next-question-btn" onClick={nextQuestion}>
+              {/* IDEAL ANSWER */}
+
+              {evaluation.idealAnswer && (
+                <div className="ideal-answer">
+                  <div className="ideal-answer-header">
+                    <span>MODEL ANSWER</span>
+                  </div>
+
+                  <h3>A stronger answer would be:</h3>
+
+                  <p>{evaluation.idealAnswer}</p>
+                </div>
+              )}
+
+              {/* NEXT */}
+
+              <button
+                type="button"
+                className="next-question-btn"
+                onClick={nextQuestion}
+              >
                 {questionIndex === interview.questions.length - 1
                   ? "View Final Results →"
                   : "Next Question →"}

@@ -36,6 +36,10 @@ const questionSchema = new mongoose.Schema(
       type: [String],
       default: [],
     },
+    idealAnswer: {
+      type: String,
+      default: "",
+    },
   },
   {
     _id: true,

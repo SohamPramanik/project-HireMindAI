@@ -5,13 +5,6 @@ const ai = new GoogleGenAI({
   apiKey: process.env.GEMINI_API_KEY,
 });
 
-const cleanJSON = (text) => {
-  return text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
-};
-
 // =========================================
 // GENERATE INTERVIEW QUESTIONS
 // =========================================
@@ -28,15 +21,16 @@ Difficulty: ${difficulty}
 Generate exactly 10 technical interview questions.
 
 Requirements:
+
 - Questions must be relevant to the selected role.
 - Match the requested difficulty.
 - Cover different important concepts.
 - Avoid duplicate questions.
 - Do not provide answers.
-- Questions should be practical and interview-oriented.
+- Questions should test actual technical understanding.
 - Return ONLY valid JSON.
 
-Return exactly this structure:
+Return exactly:
 
 {
   "questions": [
@@ -48,13 +42,16 @@ Return exactly this structure:
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.6-flash",
     contents: prompt,
   });
 
   const text = response.text;
 
-  const cleaned = cleanJSON(text);
+  const cleaned = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
 
   return JSON.parse(cleaned);
 };
@@ -65,52 +62,87 @@ Return exactly this structure:
 
 export const evaluateAnswer = async (role, difficulty, question, answer) => {
   const prompt = `
-You are an expert technical interviewer.
+You are an expert technical interviewer evaluating a candidate.
 
-Candidate role:
+Candidate Role:
 ${role}
 
-Interview difficulty:
+Interview Difficulty:
 ${difficulty}
 
-Interview question:
+Interview Question:
 ${question}
 
-Candidate answer:
+Candidate Answer:
 ${answer}
 
-Evaluate the candidate's answer.
+Evaluate the candidate's answer carefully.
 
-Return ONLY valid JSON using exactly this structure:
+Evaluate based on:
+
+1. Technical correctness
+2. Understanding of the concept
+3. Completeness
+4. Accuracy
+5. Clarity
+6. Practical understanding
+
+Be strict but fair.
+
+IMPORTANT:
+- Do not give credit for incorrect technical claims.
+- Do not assume knowledge that the candidate did not demonstrate.
+- Score from 0 to 10.
+- 0 = completely incorrect/no useful answer.
+- 10 = excellent, accurate and complete answer.
+- Give constructive feedback.
+- Explain what was wrong.
+- Explain what the candidate did well.
+- Provide an ideal answer that would be considered a strong interview answer.
+
+Return ONLY valid JSON.
+
+Use EXACTLY this structure:
 
 {
   "score": 0,
   "feedback": "",
   "strengths": [],
   "weaknesses": [],
-  "improvements": []
+  "improvements": [],
+  "idealAnswer": ""
 }
-
-Rules:
-- score must be a number between 0 and 10.
-- Evaluate technical correctness.
-- Evaluate understanding of the concept.
-- Evaluate completeness.
-- Do not give credit for technically incorrect claims.
-- Keep feedback constructive.
-- strengths must contain concise strings.
-- weaknesses must contain concise strings.
-- improvements must contain concise strings.
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-2.5-flash",
+    model: "gemini-3.6-flash",
     contents: prompt,
   });
 
   const text = response.text;
 
-  const cleaned = cleanJSON(text);
+  const cleaned = text
+    .replace(/```json/g, "")
+    .replace(/```/g, "")
+    .trim();
 
-  return JSON.parse(cleaned);
+  const evaluation = JSON.parse(cleaned);
+
+  return {
+    score: Math.max(0, Math.min(10, Number(evaluation.score) || 0)),
+
+    feedback: evaluation.feedback || "",
+
+    strengths: Array.isArray(evaluation.strengths) ? evaluation.strengths : [],
+
+    weaknesses: Array.isArray(evaluation.weaknesses)
+      ? evaluation.weaknesses
+      : [],
+
+    improvements: Array.isArray(evaluation.improvements)
+      ? evaluation.improvements
+      : [],
+
+    idealAnswer: evaluation.idealAnswer || "",
+  };
 };

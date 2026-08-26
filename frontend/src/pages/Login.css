@@ -653,3 +653,9 @@
 
   box-shadow: none !important;
 }
+.login-brand-logo,
+.login-brand-logo:hover,
+.login-brand-logo:visited {
+  text-decoration: none;
+  color: inherit;
+}

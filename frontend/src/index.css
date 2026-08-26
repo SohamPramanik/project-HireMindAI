@@ -48,35 +48,58 @@ img {
 ========================================= */
 
 :root {
+  /* Brand */
   --primary: #6c4ce8;
   --primary-dark: #5738d4;
   --primary-light: #8b72f3;
 
+  /* Backgrounds */
   --bg: #f8f9fc;
   --surface: #ffffff;
   --surface-soft: #f4f2ff;
 
+  /* Text */
   --text: #171925;
   --text-secondary: #69707d;
   --text-muted: #9298a5;
 
+  /* Borders */
   --border: #e8e9ef;
   --border-light: #eef0f5;
 
+  /* Status */
   --success: #3ba272;
   --warning: #e7a23b;
   --danger: #d95c5c;
 
+  /* Shadows */
   --shadow-sm: 0 4px 16px rgba(23, 25, 37, 0.05);
   --shadow-md: 0 12px 35px rgba(23, 25, 37, 0.08);
   --shadow-lg: 0 24px 60px rgba(23, 25, 37, 0.1);
 
+  /* Radius */
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
 
+  /* Fonts */
   --font-heading: "Plus Jakarta Sans", sans-serif;
   --font-body: "Inter", sans-serif;
+
+  /*
+    Compatibility aliases.
+    These prevent older components from breaking
+    if they still use the previous variable names.
+  */
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --text2: #69707d;
+  --bg2: #f4f5f8;
+  --secondary: #c9cbd4;
+  --primary-light: #8b72f3;
+  --border-strong: rgba(108, 76, 232, 0.35);
+  --shadow: 0 24px 60px rgba(23, 25, 37, 0.1);
+  --shadow-soft: 0 12px 35px rgba(23, 25, 37, 0.08);
+  --radius: 8px;
 }
 
 /* =========================================
@@ -99,7 +122,7 @@ p {
 }
 
 /* =========================================
-   COMMON BUTTON
+   COMMON BUTTONS
 ========================================= */
 
 .btn {
@@ -119,22 +142,26 @@ p {
   transition:
     transform 0.2s ease,
     box-shadow 0.2s ease,
-    background 0.2s ease;
+    background 0.2s ease,
+    border-color 0.2s ease;
+
+  cursor: pointer;
 }
 
 .btn-primary {
   background: var(--primary);
-  color: white;
+  color: #ffffff;
 }
 
 .btn-primary:hover {
   background: var(--primary-dark);
+  color: #ffffff;
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(108, 76, 232, 0.22);
 }
 
 .btn-secondary {
-  background: white;
+  background: #ffffff;
   color: var(--text);
   border: 1px solid var(--border);
 }
@@ -142,6 +169,7 @@ p {
 .btn-secondary:hover {
   border-color: #d8d5ed;
   background: #fafaff;
+  color: var(--text);
 }
 
 /* =========================================
@@ -184,61 +212,120 @@ p {
 }
 
 /* =========================================
-   RESPONSIVE
-========================================= */
-
-@media (max-width: 768px) {
-  .container {
-    width: 92%;
-  }
-}
-/* =========================================
-   INTERVIEW SETUP
+   INTERVIEW SETUP PAGE
 ========================================= */
 
 .setup-page {
-  min-height: 100vh;
+  min-height: calc(100vh - 70px);
+
   padding: 80px 24px;
+
   display: flex;
   justify-content: center;
   align-items: center;
+
+  background:
+    radial-gradient(
+      circle at 10% 10%,
+      rgba(108, 76, 232, 0.07),
+      transparent 35%
+    ),
+    radial-gradient(
+      circle at 90% 90%,
+      rgba(108, 76, 232, 0.05),
+      transparent 35%
+    ),
+    var(--bg);
 }
 
 .setup-container {
   width: min(900px, 100%);
 }
 
+/* =========================================
+   SETUP HEADER
+========================================= */
+
 .setup-header {
-  max-width: 650px;
-  margin-bottom: 42px;
+  max-width: 700px;
+  margin-bottom: 36px;
+}
+
+.setup-eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  padding: 7px 12px;
+
+  border-radius: 999px;
+
+  background: var(--surface-soft);
+  border: 1px solid rgba(108, 76, 232, 0.15);
+
+  color: var(--primary);
+
+  font-size: 12px;
+  font-weight: 700;
+
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
 }
 
 .setup-header h1 {
-  margin-top: 14px;
-  margin-bottom: 18px;
-  font-family: var(--font-display);
-  font-size: clamp(3rem, 6vw, 4.5rem);
-  line-height: 1.05;
+  margin-top: 18px;
+  margin-bottom: 16px;
+
+  font-family: var(--font-heading);
+
+  font-size: clamp(2.5rem, 5vw, 4rem);
+
+  line-height: 1.08;
+
   color: var(--text);
+
+  letter-spacing: -0.04em;
 }
 
 .setup-header p {
-  max-width: 600px;
-  font-size: 1rem;
-  color: var(--text2);
-  line-height: 1.8;
+  max-width: 620px;
+
+  font-size: 16px;
+
+  color: var(--text-secondary);
+
+  line-height: 1.75;
 }
+
+/* =========================================
+   SETUP CARD
+========================================= */
 
 .setup-card {
   width: 100%;
   max-width: 680px;
+
   padding: 38px;
-  background: rgba(255, 255, 255, 0.035);
+
+  background: var(--surface);
+
   border: 1px solid var(--border);
+
   border-radius: var(--radius-lg);
-  backdrop-filter: blur(16px);
-  box-shadow: var(--shadow-soft);
+
+  box-shadow: var(--shadow-md);
+
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.25s ease;
 }
+
+.setup-card:hover {
+  box-shadow: var(--shadow-lg);
+}
+
+/* =========================================
+   SETUP FORM
+========================================= */
 
 .setup-field {
   margin-bottom: 26px;
@@ -246,63 +333,94 @@ p {
 
 .setup-field label {
   display: block;
+
   margin-bottom: 10px;
+
   color: var(--text);
-  font-size: 0.9rem;
+
+  font-size: 14px;
   font-weight: 600;
 }
 
+/* =========================================
+   SETUP SELECT
+========================================= */
+
 .setup-select {
   width: 100%;
+
   padding: 15px 16px;
 
-  appearance: none;
-  -webkit-appearance: none;
+  appearance: auto;
+  -webkit-appearance: auto;
 
-  background-color: #111318;
+  background: #ffffff;
+
   color: var(--text);
 
   border: 1px solid var(--border);
-  border-radius: var(--radius);
+
+  border-radius: var(--radius-sm);
 
   font-family: var(--font-body);
-  font-size: 0.95rem;
+
+  font-size: 15px;
 
   cursor: pointer;
 
-  transition: 0.25s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
 }
 
 .setup-select:hover {
-  border-color: var(--border-strong);
+  border-color: #cfc9ee;
+  background: #fdfdff;
 }
 
 .setup-select:focus {
+  outline: none;
+
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(184, 147, 90, 0.12);
+
+  box-shadow: 0 0 0 3px rgba(108, 76, 232, 0.12);
 }
 
 .setup-select option {
-  background: #111318;
-  color: #f2efe9;
+  background: #ffffff;
+  color: var(--text);
 }
+
+/* =========================================
+   SETUP ERROR
+========================================= */
 
 .setup-error {
   margin-bottom: 20px;
+
   padding: 12px 14px;
 
-  border: 1px solid rgba(168, 92, 80, 0.35);
-  border-radius: var(--radius);
+  border: 1px solid rgba(217, 92, 92, 0.25);
 
-  background: rgba(168, 92, 80, 0.08);
+  border-radius: var(--radius-sm);
 
-  color: #d99a90;
-  font-size: 0.9rem;
+  background: rgba(217, 92, 92, 0.06);
+
+  color: var(--danger);
+
+  font-size: 14px;
+
   line-height: 1.5;
 }
 
+/* =========================================
+   SETUP BUTTON
+========================================= */
+
 .setup-button {
   width: 100%;
+
   padding: 15px 20px;
 
   display: flex;
@@ -311,45 +429,66 @@ p {
   gap: 10px;
 
   border: 1px solid var(--primary);
-  border-radius: var(--radius);
+
+  border-radius: var(--radius-sm);
 
   background: var(--primary);
-  color: #17140d;
+
+  color: #ffffff;
 
   font-family: var(--font-body);
-  font-size: 0.95rem;
+
+  font-size: 15px;
+
   font-weight: 700;
 
   cursor: pointer;
 
-  transition: 0.25s ease;
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
 }
 
 .setup-button:hover:not(:disabled) {
-  background: var(--primary-light);
-  border-color: var(--primary-light);
+  background: var(--primary-dark);
+
+  color: #ffffff;
+
   transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(184, 147, 90, 0.22);
+
+  box-shadow: 0 12px 28px rgba(108, 76, 232, 0.22);
+}
+
+.setup-button:active:not(:disabled) {
+  transform: translateY(0);
 }
 
 .setup-button:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none;
 }
 
 .setup-button span {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
+
+/* =========================================
+   SETUP FEATURES
+========================================= */
 
 .setup-features {
   display: flex;
   flex-wrap: wrap;
+
   gap: 24px;
 
   margin-top: 28px;
 
-  color: var(--text2);
-  font-size: 0.82rem;
+  color: var(--text-muted);
+
+  font-size: 13px;
 }
 
 .setup-features div {
@@ -359,16 +498,56 @@ p {
 }
 
 .setup-features span {
-  color: var(--primary);
+  color: var(--success);
+  font-weight: 700;
 }
+
+/* =========================================
+   GENERIC INPUT SAFETY
+========================================= */
+
+input,
+textarea,
+select {
+  color: var(--text);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+}
+
+/* =========================================
+   RESPONSIVE
+========================================= */
 
 @media (max-width: 768px) {
   .setup-page {
+    min-height: 100vh;
     padding: 50px 18px;
+    align-items: flex-start;
+  }
+
+  .setup-container {
+    padding-top: 20px;
+  }
+
+  .setup-header {
+    margin-bottom: 28px;
   }
 
   .setup-header h1 {
-    font-size: 2.8rem;
+    font-size: 2.6rem;
+  }
+
+  .setup-header p {
+    font-size: 15px;
   }
 
   .setup-card {
@@ -378,5 +557,15 @@ p {
   .setup-features {
     flex-direction: column;
     gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .setup-header h1 {
+    font-size: 2.2rem;
+  }
+
+  .setup-card {
+    padding: 22px 18px;
   }
 }

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/api";
+import "./InterviewSetup.css";
 
 function InterviewSetup() {
   const navigate = useNavigate();
@@ -19,8 +20,8 @@ function InterviewSetup() {
     }
 
     try {
-      setError("");
       setLoading(true);
+      setError("");
 
       const res = await API.post("/interview", {
         role,
@@ -33,7 +34,7 @@ function InterviewSetup() {
 
       navigate(`/interview/${interviewId}`);
     } catch (err) {
-      console.error("Create interview error:", err);
+      console.error("Interview creation error:", err);
 
       setError(
         err.response?.data?.message ||
@@ -45,13 +46,17 @@ function InterviewSetup() {
   };
 
   return (
-    <div className="setup-page">
-      <div className="setup-container">
-        <div className="setup-header">
-          <span className="eyebrow">AI INTERVIEW SIMULATOR</span>
+    <main className="interview-setup-page">
+      <section className="interview-setup-wrapper">
+        {/* HEADER */}
+        <div className="interview-setup-header">
+          <div className="interview-setup-eyebrow">
+            <span></span>
+            AI INTERVIEW SIMULATOR
+          </div>
 
           <h1>
-            Build your <span className="gradient">interview.</span>
+            Build your <strong>interview.</strong>
           </h1>
 
           <p>
@@ -60,16 +65,17 @@ function InterviewSetup() {
           </p>
         </div>
 
-        <div className="setup-card">
+        {/* CARD */}
+        <div className="interview-setup-card">
           <form onSubmit={handleStart}>
-            <div className="setup-field">
+            {/* ROLE */}
+            <div className="interview-setup-field">
               <label htmlFor="role">Interview Role</label>
 
               <select
                 id="role"
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
-                className="setup-select"
               >
                 <option value="">Select your role</option>
                 <option value="Backend Developer">Backend Developer</option>
@@ -85,14 +91,14 @@ function InterviewSetup() {
               </select>
             </div>
 
-            <div className="setup-field">
+            {/* DIFFICULTY */}
+            <div className="interview-setup-field">
               <label htmlFor="difficulty">Difficulty</label>
 
               <select
                 id="difficulty"
                 value={difficulty}
                 onChange={(e) => setDifficulty(e.target.value)}
-                className="setup-select"
               >
                 <option value="">Select difficulty</option>
                 <option value="Beginner">Beginner</option>
@@ -101,13 +107,15 @@ function InterviewSetup() {
               </select>
             </div>
 
-            {error && (
-              <div className="setup-error" role="alert">
-                {error}
-              </div>
-            )}
+            {/* ERROR */}
+            {error && <div className="interview-setup-error">{error}</div>}
 
-            <button type="submit" className="setup-button" disabled={loading}>
+            {/* BUTTON */}
+            <button
+              type="submit"
+              disabled={loading}
+              className="interview-setup-button"
+            >
               {loading ? (
                 "Generating interview..."
               ) : (
@@ -120,24 +128,25 @@ function InterviewSetup() {
           </form>
         </div>
 
-        <div className="setup-features">
+        {/* FEATURES */}
+        <div className="interview-setup-features">
           <div>
-            <span>✦</span>
+            <span>✓</span>
             AI-generated questions
           </div>
 
           <div>
-            <span>✦</span>
+            <span>✓</span>
             Difficulty-based interview
           </div>
 
           <div>
-            <span>✦</span>
+            <span>✓</span>
             Instant AI evaluation
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 }
 

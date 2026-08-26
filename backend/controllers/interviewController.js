@@ -25,13 +25,28 @@ export const createInterview = async (req, res) => {
       difficulty,
     });
 
+    // Generate questions using Gemini
     const generated = await generateInterviewQuestions(role, difficulty);
 
+    if (
+      !generated ||
+      !Array.isArray(generated.questions) ||
+      generated.questions.length === 0
+    ) {
+      return res.status(500).json({
+        message: "Gemini failed to generate interview questions",
+      });
+    }
+
+    // Save interview
     const interview = await Interview.create({
       user: req.user.id,
       role,
       difficulty,
       questions: generated.questions,
+      currentQuestion: 0,
+      totalScore: 0,
+      status: "in-progress",
     });
 
     console.log("Interview created:", interview._id);
@@ -51,6 +66,38 @@ export const createInterview = async (req, res) => {
 };
 
 // =========================================
+// GET INTERVIEW
+// =========================================
+
+export const getInterview = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const interview = await Interview.findOne({
+      _id: id,
+      user: req.user.id,
+    });
+
+    if (!interview) {
+      return res.status(404).json({
+        message: "Interview not found",
+      });
+    }
+
+    return res.status(200).json({
+      interview,
+    });
+  } catch (error) {
+    console.error("GET INTERVIEW ERROR:", error);
+
+    return res.status(500).json({
+      message: "Failed to load interview",
+      error: error.message,
+    });
+  }
+};
+
+// =========================================
 // SUBMIT ANSWER
 // =========================================
 
@@ -59,7 +106,13 @@ export const submitAnswer = async (req, res) => {
     const { id } = req.params;
     const { questionIndex, answer } = req.body;
 
-    if (questionIndex === undefined || !answer?.trim()) {
+    // Validate request
+    if (
+      questionIndex === undefined ||
+      questionIndex === null ||
+      typeof answer !== "string" ||
+      !answer.trim()
+    ) {
       return res.status(400).json({
         message: "Question index and answer are required",
       });
@@ -82,49 +135,99 @@ export const submitAnswer = async (req, res) => {
       });
     }
 
+    // Validate question index
+    if (questionIndex < 0 || questionIndex >= interview.questions.length) {
+      return res.status(400).json({
+        message: "Invalid question index",
+      });
+    }
+
     const question = interview.questions[questionIndex];
 
     if (!question) {
       return res.status(400).json({
-        message: "Invalid question",
+        message: "Question not found",
       });
     }
+
+    console.log(`Evaluating Q${questionIndex + 1} for interview ${id}`);
+
+    // =========================================
+    // GEMINI EVALUATION
+    // =========================================
 
     const evaluation = await evaluateAnswer(
       interview.role,
       interview.difficulty,
       question.question,
-      answer,
+      answer.trim(),
     );
 
-    question.answer = answer;
-    question.score = evaluation.score;
-    question.feedback = evaluation.feedback;
-    question.strengths = evaluation.strengths;
-    question.weaknesses = evaluation.weaknesses;
-    question.improvements = evaluation.improvements;
+    // =========================================
+    // SAVE ANSWER + EVALUATION
+    // =========================================
+
+    question.answer = answer.trim();
+
+    question.score = Number(evaluation.score) || 0;
+
+    question.feedback = evaluation.feedback || "";
+
+    question.strengths = Array.isArray(evaluation.strengths)
+      ? evaluation.strengths
+      : [];
+
+    question.weaknesses = Array.isArray(evaluation.weaknesses)
+      ? evaluation.weaknesses
+      : [];
+
+    question.improvements = Array.isArray(evaluation.improvements)
+      ? evaluation.improvements
+      : [];
+
+    question.idealAnswer = evaluation.idealAnswer || "";
+
+    // =========================================
+    // UPDATE CURRENT QUESTION
+    // =========================================
 
     interview.currentQuestion = questionIndex + 1;
 
-    // Calculate current total score
+    // =========================================
+    // CALCULATE AVERAGE SCORE
+    // =========================================
+
     const answeredQuestions = interview.questions.filter(
-      (q) => q.score !== null,
+      (q) => typeof q.score === "number",
     );
 
-    interview.totalScore =
-      answeredQuestions.reduce((sum, q) => sum + q.score, 0) /
-      answeredQuestions.length;
+    if (answeredQuestions.length > 0) {
+      const total = answeredQuestions.reduce((sum, q) => sum + q.score, 0);
 
-    // If all 10 questions are answered
+      interview.totalScore = total / answeredQuestions.length;
+    } else {
+      interview.totalScore = 0;
+    }
+
+    // =========================================
+    // COMPLETE INTERVIEW
+    // =========================================
+
     if (interview.currentQuestion >= interview.questions.length) {
       interview.status = "completed";
     }
 
     await interview.save();
 
-    return res.json({
+    console.log(
+      `Q${questionIndex + 1} evaluated. Score: ${evaluation.score}/10`,
+    );
+
+    return res.status(200).json({
       message: "Answer evaluated successfully",
+
       evaluation,
+
       interview,
     });
   } catch (error) {
