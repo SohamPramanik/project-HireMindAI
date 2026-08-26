@@ -12,7 +12,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 
 function Home() {
   return (
