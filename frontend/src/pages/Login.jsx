@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { ArrowRight, Eye, EyeOff, ShieldCheck } from "lucide-react";
 
 import API from "../services/api";
@@ -8,7 +8,6 @@ import { AuthContext } from "../context/AuthContext";
 import "./Login.css";
 
 export default function Login() {
-  const navigate = useNavigate();
   const { login } = useContext(AuthContext);
 
   const [email, setEmail] = useState("");
@@ -31,8 +30,6 @@ export default function Login() {
       });
 
       login(res.data.token, res.data.user);
-
-      navigate("/dashboard");
     } catch (err) {
       setError(
         err.response?.data?.message ||

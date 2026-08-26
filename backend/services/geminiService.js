@@ -10,27 +10,263 @@ const ai = new GoogleGenAI({
 // =========================================
 
 export const generateInterviewQuestions = async (role, difficulty) => {
+  const topicInstructions = {
+    Backend: `
+Focus specifically on backend development.
+
+Possible areas:
+- REST APIs
+- HTTP/HTTPS
+- Authentication and authorization
+- JWT
+- Middleware
+- Server architecture
+- MVC
+- Databases
+- API security
+- Error handling
+- Caching
+- Scalability
+- Backend performance
+- Sessions
+- Rate limiting
+`,
+
+    Frontend: `
+Focus specifically on frontend development.
+
+Possible areas:
+- HTML
+- CSS
+- JavaScript
+- DOM
+- Events
+- React
+- Components
+- Props
+- State
+- Hooks
+- API integration
+- Browser concepts
+- Responsive design
+- Performance
+- Accessibility
+`,
+
+    Java: `
+Focus specifically on Java programming.
+
+Possible areas:
+- OOP
+- Classes and objects
+- Inheritance
+- Polymorphism
+- Encapsulation
+- Abstraction
+- Interfaces
+- Collections
+- Exception handling
+- Multithreading
+- JVM
+- JDK
+- JRE
+- Memory management
+- Java 8+ features
+`,
+
+    "C++": `
+Focus specifically on C++ programming.
+
+Possible areas:
+- C++ syntax
+- OOP
+- Pointers
+- References
+- Memory management
+- Constructors/destructors
+- Inheritance
+- Polymorphism
+- STL
+- Vectors
+- Maps
+- Sets
+- Templates
+- Smart pointers
+- Exception handling
+- Modern C++
+`,
+
+    Python: `
+Focus specifically on Python programming.
+
+Possible areas:
+- Python syntax
+- Data types
+- Lists
+- Tuples
+- Sets
+- Dictionaries
+- Functions
+- OOP
+- Decorators
+- Generators
+- Exception handling
+- Iterators
+- Modules
+- Virtual environments
+- Memory management
+`,
+
+    "AI/ML": `
+Focus specifically on Artificial Intelligence and Machine Learning.
+
+Possible areas:
+- Machine learning fundamentals
+- Supervised learning
+- Unsupervised learning
+- Classification
+- Regression
+- Clustering
+- Feature engineering
+- Model evaluation
+- Overfitting
+- Underfitting
+- Bias and variance
+- Neural networks
+- Deep learning
+- NLP
+- Transformers
+- Generative AI
+`,
+
+    SQL: `
+Focus specifically on SQL and relational databases.
+
+Possible areas:
+- SELECT
+- WHERE
+- GROUP BY
+- HAVING
+- ORDER BY
+- JOINs
+- Subqueries
+- CTEs
+- Window functions
+- Aggregation
+- Indexes
+- Transactions
+- ACID
+- Normalization
+- Constraints
+- Query optimization
+`,
+
+    MongoDB: `
+Focus specifically on MongoDB and NoSQL databases.
+
+Possible areas:
+- Documents
+- Collections
+- BSON
+- CRUD
+- MongoDB queries
+- Aggregation pipeline
+- Indexes
+- Schema design
+- Embedding
+- Referencing
+- MongoDB transactions
+- Replication
+- Sharding
+- Performance
+- Mongoose
+`,
+
+    Blockchain: `
+Focus specifically on blockchain technology.
+
+Possible areas:
+- Blockchain fundamentals
+- Blocks
+- Hashing
+- Cryptography
+- Distributed ledgers
+- Consensus mechanisms
+- Proof of Work
+- Proof of Stake
+- Smart contracts
+- Ethereum
+- Bitcoin
+- Wallets
+- Transactions
+- Digital signatures
+- Decentralization
+- Security
+`,
+  };
+
+  const selectedTopic =
+    topicInstructions[role] ||
+    `
+Focus specifically on ${role}.
+Only ask questions directly related to ${role}.
+`;
+
   const prompt = `
 You are an expert technical interviewer.
 
-Create a realistic technical interview for:
+The candidate selected this interview topic:
 
-Role: ${role}
-Difficulty: ${difficulty}
+TOPIC: ${role}
+
+DIFFICULTY: ${difficulty}
+
+IMPORTANT:
+The interview MUST be strictly about the selected topic.
+
+${selectedTopic}
 
 Generate exactly 10 technical interview questions.
 
-Requirements:
+DIFFICULTY RULES:
 
-- Questions must be relevant to the selected role.
-- Match the requested difficulty.
-- Cover different important concepts.
-- Avoid duplicate questions.
-- Do not provide answers.
-- Questions should test actual technical understanding.
-- Return ONLY valid JSON.
+Beginner:
+- Fundamental concepts
+- Basic terminology
+- Simple practical questions
+- Basic examples
 
-Return exactly:
+Intermediate:
+- Deeper technical understanding
+- Practical implementation
+- Debugging
+- Design decisions
+- Real-world scenarios
+
+Advanced:
+- Complex technical concepts
+- System/design decisions
+- Performance
+- Scalability
+- Security
+- Edge cases
+- Real-world engineering scenarios
+
+IMPORTANT RULES:
+
+1. Every question MUST be related to ${role}.
+2. Do NOT ask questions from unrelated technologies.
+3. Do NOT mix different interview topics.
+4. Questions should become progressively challenging.
+5. Avoid duplicate or nearly identical questions.
+6. Cover different concepts within ${role}.
+7. Questions must test actual technical understanding.
+8. Do not provide answers.
+9. Do not provide explanations.
+10. Do not include numbering inside the question text.
+11. Return ONLY valid JSON.
+
+Return EXACTLY this structure:
 
 {
   "questions": [
@@ -53,7 +289,17 @@ Return exactly:
     .replace(/```/g, "")
     .trim();
 
-  return JSON.parse(cleaned);
+  const result = JSON.parse(cleaned);
+
+  if (
+    !result.questions ||
+    !Array.isArray(result.questions) ||
+    result.questions.length !== 10
+  ) {
+    throw new Error("Gemini did not return exactly 10 questions.");
+  }
+
+  return result;
 };
 
 // =========================================
@@ -62,21 +308,23 @@ Return exactly:
 
 export const evaluateAnswer = async (role, difficulty, question, answer) => {
   const prompt = `
-You are an expert technical interviewer evaluating a candidate.
+You are an expert technical interviewer.
 
-Candidate Role:
+The candidate is being interviewed specifically on:
+
+TOPIC:
 ${role}
 
-Interview Difficulty:
+DIFFICULTY:
 ${difficulty}
 
-Interview Question:
+QUESTION:
 ${question}
 
-Candidate Answer:
+CANDIDATE ANSWER:
 ${answer}
 
-Evaluate the candidate's answer carefully.
+Evaluate the candidate's answer ONLY in the context of ${role}.
 
 Evaluate based on:
 
@@ -90,8 +338,11 @@ Evaluate based on:
 Be strict but fair.
 
 IMPORTANT:
+
 - Do not give credit for incorrect technical claims.
 - Do not assume knowledge that the candidate did not demonstrate.
+- Evaluate whether the answer actually addresses the question.
+- Evaluate whether the answer is technically correct for ${role}.
 - Score from 0 to 10.
 - 0 = completely incorrect/no useful answer.
 - 10 = excellent, accurate and complete answer.
@@ -99,6 +350,7 @@ IMPORTANT:
 - Explain what was wrong.
 - Explain what the candidate did well.
 - Provide an ideal answer that would be considered a strong interview answer.
+- Do not evaluate concepts unrelated to ${role}.
 
 Return ONLY valid JSON.
 

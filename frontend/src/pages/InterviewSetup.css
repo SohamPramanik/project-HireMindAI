@@ -400,3 +400,26 @@
     gap: 12px;
   }
 }
+
+.interview-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.end-interview-btn {
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  color: #dc2626;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.end-interview-btn:hover {
+  background: #fef2f2;
+  border-color: #fecaca;
+}

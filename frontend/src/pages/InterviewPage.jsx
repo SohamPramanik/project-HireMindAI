@@ -108,6 +108,22 @@ function InterviewPage() {
   };
 
   // =====================================================
+  // END INTERVIEW
+  // =====================================================
+
+  const endInterview = () => {
+    if (!interview) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to end this interview? Your answered questions will be saved.",
+    );
+
+    if (!confirmed) return;
+
+    navigate(`/result/${id}`);
+  };
+
+  // =====================================================
   // LOADING
   // =====================================================
 
@@ -185,12 +201,22 @@ function InterviewPage() {
           <p>{interview.difficulty} difficulty</p>
         </div>
 
-        <div className="interview-score">
-          <span>Current Score</span>
+        <div className="interview-header-actions">
+          <div className="interview-score">
+            <span>Current Score</span>
 
-          <strong>{Number(interview.totalScore || 0).toFixed(1)}</strong>
+            <strong>{Number(interview.totalScore || 0).toFixed(1)}</strong>
 
-          <small>/ 10</small>
+            <small>/ 10</small>
+          </div>
+
+          <button
+            type="button"
+            className="end-interview-btn"
+            onClick={endInterview}
+          >
+            End Interview
+          </button>
         </div>
       </header>
 

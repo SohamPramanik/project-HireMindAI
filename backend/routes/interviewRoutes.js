@@ -4,19 +4,23 @@ import {
   createInterview,
   getInterview,
   submitAnswer,
+  getDashboard,
 } from "../controllers/interviewController.js";
 
-import authMiddleware from "../middleware/authMiddleware.js";
+import protect from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Dashboard
+router.get("/dashboard", protect, getDashboard);
+
 // Create interview
-router.post("/", authMiddleware, createInterview);
+router.post("/", protect, createInterview);
 
 // Get interview
-router.get("/:id", authMiddleware, getInterview);
+router.get("/:id", protect, getInterview);
 
 // Submit answer
-router.post("/:id/answer", authMiddleware, submitAnswer);
+router.post("/:id/answer", protect, submitAnswer);
 
 export default router;

@@ -98,6 +98,69 @@ export const getInterview = async (req, res) => {
 };
 
 // =========================================
+// GET DASHBOARD DATA
+// =========================================
+
+export const getDashboard = async (req, res) => {
+  try {
+    // Get only interviews belonging to logged-in user
+    const interviews = await Interview.find({
+      user: req.user.id,
+    }).sort({ createdAt: -1 });
+
+    // Total number of interviews
+    const totalInterviews = interviews.length;
+
+    // Completed interviews
+    const completedInterviews = interviews.filter(
+      (interview) => interview.status === "completed",
+    );
+
+    // Pending / in-progress interviews
+    const pendingInterviews = interviews.filter(
+      (interview) => interview.status !== "completed",
+    );
+
+    // Calculate average score
+    let averageScore = 0;
+
+    if (completedInterviews.length > 0) {
+      const totalScore = completedInterviews.reduce(
+        (sum, interview) => sum + Number(interview.totalScore || 0),
+        0,
+      );
+
+      averageScore = totalScore / completedInterviews.length;
+    }
+
+    // Get latest 5 interviews
+    const recentInterviews = interviews.slice(0, 5).map((interview) => ({
+      _id: interview._id,
+      role: interview.role,
+      difficulty: interview.difficulty,
+      score: Number(interview.totalScore || 0),
+      status: interview.status,
+      date: interview.createdAt,
+    }));
+
+    return res.status(200).json({
+      totalInterviews,
+      averageScore: Number(averageScore.toFixed(1)),
+      completed: completedInterviews.length,
+      pending: pendingInterviews.length,
+      recentInterviews,
+    });
+  } catch (error) {
+    console.error("Dashboard error:", error);
+
+    return res.status(500).json({
+      message: "Failed to load dashboard data",
+      error: error.message,
+    });
+  }
+};
+
+// =========================================
 // SUBMIT ANSWER
 // =========================================
 

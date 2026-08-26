@@ -1,18 +1,55 @@
 import { Link } from "react-router-dom";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+
 import { AuthContext } from "../context/AuthContext";
+import API from "../services/api";
+
 import "./Dashboard.css";
 
 function Dashboard() {
-  const { user } = useContext(AuthContext);
+  const { user, logout } = useContext(AuthContext);
 
-  const [dashboard] = useState({
+  const [dashboard, setDashboard] = useState({
     totalInterviews: 0,
     averageScore: 0,
     completed: 0,
     pending: 0,
     recentInterviews: [],
   });
+
+  const [loading, setLoading] = useState(true);
+  const [dashboardError, setDashboardError] = useState("");
+
+  useEffect(() => {
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setDashboardError("");
+
+        const res = await API.get("/interview/dashboard");
+
+        setDashboard(res.data);
+      } catch (error) {
+        console.error("Dashboard loading error:", error);
+
+        setDashboardError(
+          error.response?.data?.message || "Failed to load dashboard data.",
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDashboard();
+  }, []);
+
+  const handleLogout = () => {
+    const confirmed = window.confirm("Are you sure you want to logout?");
+
+    if (confirmed) {
+      logout();
+    }
+  };
 
   return (
     <div className="dashboard">
@@ -33,10 +70,17 @@ function Dashboard() {
           </p>
         </div>
 
-        <Link to="/interview/setup" className="header-action">
-          <span>＋</span>
-          New Interview
-        </Link>
+        <div className="header-actions">
+          <Link to="/interview/setup" className="header-action">
+            <span>＋</span>
+            New Interview
+          </Link>
+
+          <button type="button" className="logout-btn" onClick={handleLogout}>
+            <span>↪</span>
+            Logout
+          </button>
+        </div>
       </header>
 
       {/* =========================
@@ -71,7 +115,7 @@ function Dashboard() {
           </div>
 
           <h2>
-            {dashboard.averageScore}
+            {Math.round(dashboard.averageScore * 10)}
             <small>%</small>
           </h2>
 
@@ -292,7 +336,9 @@ function Dashboard() {
                     </td>
 
                     <td>
-                      <span className="score">{item.score}%</span>
+                      <span className="score">
+                        {Math.round(item.score * 10)}%
+                      </span>
                     </td>
 
                     <td>
@@ -308,7 +354,15 @@ function Dashboard() {
                     </td>
 
                     <td>
-                      <span className="date">{item.date || "—"}</span>
+                      <span className="date">
+                        {item.date
+                          ? new Date(item.date).toLocaleDateString("en-IN", {
+                              day: "2-digit",
+                              month: "short",
+                              year: "numeric",
+                            })
+                          : "—"}
+                      </span>
                     </td>
 
                     <td>

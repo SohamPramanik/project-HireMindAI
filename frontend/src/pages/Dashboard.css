@@ -26,6 +26,7 @@
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
+
   gap: 30px;
 }
 
@@ -71,13 +72,34 @@
   line-height: 1.7;
 }
 
+/* =========================================
+   HEADER ACTIONS
+========================================= */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  gap: 10px;
+
+  flex-shrink: 0;
+}
+
+/* =========================================
+   NEW INTERVIEW BUTTON
+========================================= */
+
 .header-action {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   gap: 8px;
 
-  padding: 12px 18px;
+  height: 42px;
+
+  padding: 0 16px;
 
   background: #ffffff;
   color: #40339b;
@@ -87,12 +109,15 @@
 
   box-shadow: 0 4px 14px rgba(30, 25, 70, 0.05);
 
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 650;
 
   text-decoration: none;
 
-  transition: 0.25s ease;
+  transition:
+    transform 0.25s ease,
+    border-color 0.25s ease,
+    box-shadow 0.25s ease;
 }
 
 .header-action span {
@@ -106,6 +131,73 @@
   border-color: #d7d0ff;
 
   box-shadow: 0 8px 22px rgba(92, 73, 190, 0.12);
+}
+
+/* =========================================
+   LOGOUT BUTTON
+========================================= */
+
+.logout-btn {
+  appearance: none;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 7px;
+
+  width: auto;
+  min-width: 85px;
+  height: 42px;
+
+  padding: 0 14px;
+
+  background: #ffffff;
+  color: #666a79;
+
+  border: 1px solid #e8e8ef;
+  border-radius: 10px;
+
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: 13px;
+  font-weight: 650;
+
+  cursor: pointer;
+
+  box-shadow: 0 4px 14px rgba(30, 25, 70, 0.04);
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.logout-btn span {
+  font-size: 15px;
+  line-height: 1;
+}
+
+.logout-btn:hover {
+  transform: translateY(-2px);
+
+  background: #fff5f5;
+  color: #d45555;
+
+  border-color: #f0cccc;
+
+  box-shadow: 0 7px 18px rgba(180, 70, 70, 0.08);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
 }
 
 /* =========================================
@@ -262,7 +354,9 @@
 
   display: grid;
 
-  grid-template-columns: minmax(0, 1.65fr) minmax(310px, 0.85fr);
+  grid-template-columns:
+    minmax(0, 1.65fr)
+    minmax(310px, 0.85fr);
 
   gap: 18px;
 }
@@ -340,6 +434,7 @@
 .start-btn {
   display: inline-flex;
   align-items: center;
+
   gap: 14px;
 
   padding: 12px 17px 12px 19px;
@@ -474,6 +569,7 @@
 
   display: flex;
   align-items: center;
+
   gap: 9px;
 
   padding: 10px 12px;
@@ -562,6 +658,7 @@
 
   font-size: 19px;
   font-weight: 720;
+
   letter-spacing: -0.3px;
 }
 
@@ -652,6 +749,7 @@
 
 .quick-item:hover .quick-arrow {
   color: #6c55df;
+
   transform: translateX(3px);
 }
 
@@ -783,6 +881,7 @@
 .empty-btn {
   display: inline-flex;
   align-items: center;
+
   gap: 10px;
 
   padding: 10px 14px;
@@ -818,12 +917,7 @@
   overflow-x: auto;
 }
 
-.interview-table table {
-  width: 100%;
-
-  border-collapse: collapse;
-}
-
+.interview-table table,
 .table-wrapper table {
   width: 100%;
 
@@ -872,6 +966,7 @@
 .role-cell {
   display: flex;
   align-items: center;
+
   gap: 11px;
 }
 
@@ -976,6 +1071,10 @@
   }
 }
 
+/* =========================================
+   TABLET / MOBILE
+========================================= */
+
 @media (max-width: 760px) {
   .dashboard {
     padding: 28px 18px 50px;
@@ -997,8 +1096,27 @@
     font-size: 13px;
   }
 
-  .header-action {
+  /* Header buttons */
+
+  .header-actions {
     width: 100%;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-start;
+
+    gap: 10px;
+  }
+
+  .header-action {
+    flex: 1;
+  }
+
+  .logout-btn {
+    flex-shrink: 0;
+
+    min-width: 85px;
   }
 
   .stats {
@@ -1039,6 +1157,7 @@
     padding: 23px 20px 19px;
 
     align-items: flex-start;
+
     flex-direction: column;
 
     gap: 12px;
@@ -1059,6 +1178,10 @@
   }
 }
 
+/* =========================================
+   SMALL MOBILE
+========================================= */
+
 @media (max-width: 450px) {
   .dashboard-header h1 {
     font-size: 27px;
@@ -1074,5 +1197,19 @@
 
   .recent-header h2 {
     font-size: 18px;
+  }
+
+  .header-actions {
+    gap: 8px;
+  }
+
+  .header-action {
+    padding: 0 12px;
+  }
+
+  .logout-btn {
+    min-width: 78px;
+
+    padding: 0 11px;
   }
 }
