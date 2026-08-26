@@ -12,11 +12,11 @@ import {
   ShieldCheck,
 } from "lucide-react";
 
-import Navbar from "../components/NavBar.jsx";
+import Navbar from "../components/Navbar";
 
 function Home() {
   return (
-    <div className="hom
+    <div className="home">
       <Navbar />
 
       {/* =========================================
