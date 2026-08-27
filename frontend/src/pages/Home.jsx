@@ -72,16 +72,13 @@ function Home() {
             </div>
           </div>
 
-          {/* =====================================
-              HERO PRODUCT PREVIEW
-          ====================================== */}
+          {/* HERO PRODUCT PREVIEW */}
 
           <div className="hero-right">
             <div className="dashboard-preview">
               <div className="preview-topbar">
                 <div className="preview-brand">
                   <div className="preview-logo">H</div>
-
                   <span>HireMind AI</span>
                 </div>
 
@@ -133,6 +130,7 @@ function Home() {
                 <div className="answer-area">
                   <div className="answer-header">
                     <span>Your answer</span>
+
                     <span className="recording">
                       <span></span>
                       Recording
@@ -208,6 +206,8 @@ function Home() {
         </div>
 
         <div className="feature-grid">
+          {/* FEATURE 01 */}
+
           <div className="feature-card featured">
             <div className="feature-icon purple">
               <Bot size={22} />
@@ -222,11 +222,13 @@ function Home() {
               around your selected role and difficulty.
             </p>
 
-            <div className="feature-link">
-              Personalized questions
+            <a href="#how" className="feature-link">
+              See how it works
               <ArrowRight size={15} />
-            </div>
+            </a>
           </div>
+
+          {/* FEATURE 02 */}
 
           <div className="feature-card">
             <div className="feature-icon blue">
@@ -242,11 +244,13 @@ function Home() {
               and detailed answer feedback.
             </p>
 
-            <div className="feature-link">
-              Detailed feedback
+            <a href="#performance" className="feature-link">
+              View performance
               <ArrowRight size={15} />
-            </div>
+            </a>
           </div>
+
+          {/* FEATURE 03 */}
 
           <div className="feature-card">
             <div className="feature-icon green">
@@ -262,11 +266,13 @@ function Home() {
               other technical interview paths.
             </p>
 
-            <div className="feature-link">
-              Practice your role
+            <a href="#how" className="feature-link">
+              Start preparing
               <ArrowRight size={15} />
-            </div>
+            </a>
           </div>
+
+          {/* FEATURE 04 */}
 
           <div className="feature-card">
             <div className="feature-icon orange">
@@ -282,10 +288,10 @@ function Home() {
               authentication and user-specific data access.
             </p>
 
-            <div className="feature-link">
-              Built with security
+            <Link to="/register" className="feature-link">
+              Get started
               <ArrowRight size={15} />
-            </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -294,7 +300,7 @@ function Home() {
           PRODUCT HIGHLIGHT
       ========================================== */}
 
-      <section className="highlight-section">
+      <section id="performance" className="highlight-section">
         <div className="highlight-container">
           <div className="highlight-content">
             <span className="section-label">PRACTICE WITH PURPOSE</span>
@@ -502,10 +508,6 @@ function Home() {
           FOOTER
       ========================================== */}
 
-      {/* =========================================
-    FOOTER
-========================================== */}
-
       <footer id="contact">
         <div className="footer-content">
           <div className="footer-brand">
@@ -513,42 +515,53 @@ function Home() {
 
             <div>
               <h2>HireMind AI</h2>
+
               <p>AI-driven interview preparation for serious candidates.</p>
             </div>
           </div>
 
           <div className="footer-links">
             <a href="#features">Features</a>
+
             <a href="#how">How it works</a>
+
             <a href="#contact">Contact</a>
+
             <Link to="/login">Sign in</Link>
+
             <Link to="/register">Get started</Link>
           </div>
         </div>
 
         {/* CONTACT */}
+
         <div className="footer-contact">
           <div className="contact-heading">
             <span>GET IN TOUCH</span>
+
             <h3>Have a question?</h3>
           </div>
 
           <div className="contact-details">
             <a href="mailto:soham.workspace1@gmail.com">
               <span className="contact-icon">✉</span>
+
               <div>
                 <small>Email</small>
+
                 <strong>soham.workspace1@gmail.com</strong>
               </div>
             </a>
 
-            <a href="tel:+919123332532">
+            {/* <a href="tel:+919123332532">
               <span className="contact-icon">☎</span>
+
               <div>
                 <small>Phone</small>
+
                 <strong>+91 91233 32532</strong>
               </div>
-            </a>
+            </a> */}
           </div>
         </div>
 
