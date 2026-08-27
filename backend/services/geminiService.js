@@ -6,6 +6,26 @@ const ai = new GoogleGenAI({
 });
 
 // =========================================
+// HELPER: CLEAN GEMINI JSON RESPONSE
+// =========================================
+
+const parseGeminiJSON = (text) => {
+  const cleaned = text
+    .replace(/```json/gi, "")
+    .replace(/```/g, "")
+    .trim();
+
+  try {
+    return JSON.parse(cleaned);
+  } catch (error) {
+    console.error("Gemini JSON Parse Error:", error);
+    console.error("Gemini Raw Response:", text);
+
+    throw new Error("Gemini returned invalid JSON.");
+  }
+};
+
+// =========================================
 // GENERATE INTERVIEW QUESTIONS
 // =========================================
 
@@ -209,20 +229,17 @@ Possible areas:
     topicInstructions[role] ||
     `
 Focus specifically on ${role}.
+
 Only ask questions directly related to ${role}.
 `;
 
   const prompt = `
 You are an expert technical interviewer.
 
-The candidate selected this interview topic:
+The candidate selected:
 
 TOPIC: ${role}
-
 DIFFICULTY: ${difficulty}
-
-IMPORTANT:
-The interview MUST be strictly about the selected topic.
 
 ${selectedTopic}
 
@@ -257,16 +274,17 @@ IMPORTANT RULES:
 1. Every question MUST be related to ${role}.
 2. Do NOT ask questions from unrelated technologies.
 3. Do NOT mix different interview topics.
-4. Questions should become progressively challenging.
+4. Questions should gradually become more challenging.
 5. Avoid duplicate or nearly identical questions.
 6. Cover different concepts within ${role}.
 7. Questions must test actual technical understanding.
 8. Do not provide answers.
 9. Do not provide explanations.
 10. Do not include numbering inside the question text.
-11. Return ONLY valid JSON.
 
-Return EXACTLY this structure:
+Return ONLY valid JSON.
+
+EXACT STRUCTURE:
 
 {
   "questions": [
@@ -278,18 +296,11 @@ Return EXACTLY this structure:
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
+    model: "gemini-3.5-flash-lite",
     contents: prompt,
   });
 
-  const text = response.text;
-
-  const cleaned = text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
-
-  const result = JSON.parse(cleaned);
+  const result = parseGeminiJSON(response.text);
 
   if (
     !result.questions ||
@@ -349,12 +360,12 @@ IMPORTANT:
 - Give constructive feedback.
 - Explain what was wrong.
 - Explain what the candidate did well.
-- Provide an ideal answer that would be considered a strong interview answer.
+- Provide an ideal answer.
 - Do not evaluate concepts unrelated to ${role}.
 
 Return ONLY valid JSON.
 
-Use EXACTLY this structure:
+EXACT STRUCTURE:
 
 {
   "score": 0,
@@ -367,18 +378,11 @@ Use EXACTLY this structure:
 `;
 
   const response = await ai.models.generateContent({
-    model: "gemini-3.6-flash",
+    model: "gemini-3.5-flash-lite",
     contents: prompt,
   });
 
-  const text = response.text;
-
-  const cleaned = text
-    .replace(/```json/g, "")
-    .replace(/```/g, "")
-    .trim();
-
-  const evaluation = JSON.parse(cleaned);
+  const evaluation = parseGeminiJSON(response.text);
 
   return {
     score: Math.max(0, Math.min(10, Number(evaluation.score) || 0)),
