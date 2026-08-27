@@ -1488,6 +1488,113 @@ footer {
 
   font-size: 9px;
 }
+/* =========================================
+   CONTACT
+========================================= */
+
+.footer-contact {
+  width: min(1150px, 100%);
+
+  margin: 35px auto 0;
+
+  padding: 25px 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 30px;
+
+  border-top: 1px solid #f0f0f4;
+}
+
+.contact-heading span {
+  display: block;
+
+  margin-bottom: 5px;
+
+  color: #705bd8;
+
+  font-size: 8px;
+  font-weight: 800;
+
+  letter-spacing: 1.4px;
+}
+
+.contact-heading h3 {
+  margin: 0;
+
+  color: #30323f;
+
+  font-family: "Manrope", sans-serif;
+
+  font-size: 17px;
+  font-weight: 750;
+}
+
+.contact-details {
+  display: flex;
+
+  align-items: center;
+
+  gap: 30px;
+}
+
+.contact-details a {
+  display: flex;
+
+  align-items: center;
+
+  gap: 9px;
+
+  color: #777a88;
+
+  text-decoration: none;
+
+  transition: 0.2s ease;
+}
+
+.contact-details a:hover {
+  color: #6550d4;
+}
+
+.contact-icon {
+  width: 32px;
+  height: 32px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 8px;
+
+  color: #6852dc;
+
+  background: #f1efff;
+
+  font-size: 13px;
+}
+
+.contact-details small,
+.contact-details strong {
+  display: block;
+}
+
+.contact-details small {
+  margin-bottom: 2px;
+
+  color: #a0a2ae;
+
+  font-size: 8px;
+}
+
+.contact-details strong {
+  color: #555866;
+
+  font-size: 10px;
+
+  font-weight: 650;
+}
 
 /* =========================================
    RESPONSIVE
@@ -1669,6 +1776,23 @@ footer {
     flex-direction: column;
 
     gap: 7px;
+  }
+  .footer-contact {
+    align-items: flex-start;
+
+    flex-direction: column;
+
+    gap: 20px;
+  }
+
+  .contact-details {
+    width: 100%;
+
+    flex-direction: column;
+
+    align-items: flex-start;
+
+    gap: 14px;
   }
 }
 

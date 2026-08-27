@@ -502,31 +502,58 @@ function Home() {
           FOOTER
       ========================================== */}
 
-      <footer>
+      {/* =========================================
+    FOOTER
+========================================== */}
+
+      <footer id="contact">
         <div className="footer-content">
           <div className="footer-brand">
             <div className="footer-logo">H</div>
 
             <div>
               <h2>HireMind AI</h2>
-
               <p>AI-driven interview preparation for serious candidates.</p>
             </div>
           </div>
 
           <div className="footer-links">
             <a href="#features">Features</a>
-
             <a href="#how">How it works</a>
-
+            <a href="#contact">Contact</a>
             <Link to="/login">Sign in</Link>
-
             <Link to="/register">Get started</Link>
           </div>
         </div>
 
+        {/* CONTACT */}
+        <div className="footer-contact">
+          <div className="contact-heading">
+            <span>GET IN TOUCH</span>
+            <h3>Have a question?</h3>
+          </div>
+
+          <div className="contact-details">
+            <a href="mailto:soham.workspace1@gmail.com">
+              <span className="contact-icon">✉</span>
+              <div>
+                <small>Email</small>
+                <strong>soham.workspace1@gmail.com</strong>
+              </div>
+            </a>
+
+            <a href="tel:+919123332532">
+              <span className="contact-icon">☎</span>
+              <div>
+                <small>Phone</small>
+                <strong>+91 91233 32532</strong>
+              </div>
+            </a>
+          </div>
+        </div>
+
         <div className="footer-bottom">
-          <span>© 2026 HireMind AI</span>
+          <span>© 2026 HireMind AI. All rights reserved.</span>
 
           <span>Built for better interviews.</span>
         </div>
