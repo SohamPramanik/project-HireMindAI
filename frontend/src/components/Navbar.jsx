@@ -23,7 +23,7 @@ function Navbar() {
 
           <a href="/#how">How It Works</a>
 
-          <a href="#stats">Why HireMind</a>
+          {/* <a href="#stats">Why HireMind</a> */}
 
           <a href="/#contact">Contact</a>
         </div>
