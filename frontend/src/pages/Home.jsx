@@ -522,7 +522,7 @@ function Home() {
           {/* SOCIAL LINKS */}
           <div className="footer-socials">
             <a
-              href="https://www.instagram.com/YOUR_INSTAGRAM_USERNAME/"
+              href="https://www.instagram.com/iam_sohxm/"
               target="_blank"
               rel="noopener noreferrer"
             >
