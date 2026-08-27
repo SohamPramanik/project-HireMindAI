@@ -515,30 +515,42 @@ function Home() {
 
             <div>
               <h2>HireMind AI</h2>
-
               <p>AI-driven interview preparation for serious candidates.</p>
             </div>
           </div>
 
-          <div className="footer-links">
-            <a href="#features">Features</a>
+          {/* SOCIAL LINKS */}
+          <div className="footer-socials">
+            <a
+              href="https://www.instagram.com/YOUR_INSTAGRAM_USERNAME/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Instagram
+            </a>
 
-            <a href="#how">How it works</a>
+            <a
+              href="https://www.linkedin.com/in/soham-pramanik/"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
 
-            <a href="#contact">Contact</a>
-
-            <Link to="/login">Sign in</Link>
-
-            <Link to="/register">Get started</Link>
+            <a
+              href="https://github.com/SohamPramanik"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
           </div>
         </div>
 
         {/* CONTACT */}
-
         <div className="footer-contact">
           <div className="contact-heading">
             <span>GET IN TOUCH</span>
-
             <h3>Have a question?</h3>
           </div>
 
@@ -548,26 +560,24 @@ function Home() {
 
               <div>
                 <small>Email</small>
-
                 <strong>soham.workspace1@gmail.com</strong>
               </div>
             </a>
 
-            {/* <a href="tel:+919123332532">
-              <span className="contact-icon">☎</span>
-
-              <div>
-                <small>Phone</small>
-
-                <strong>+91 91233 32532</strong>
-              </div>
-            </a> */}
+            {/* PHONE
+      <a href="tel:+919123332532">
+        <span className="contact-icon">☎</span>
+        <div>
+          <small>Phone</small>
+          <strong>+91 91233 32532</strong>
+        </div>
+      </a>
+      */}
           </div>
         </div>
 
         <div className="footer-bottom">
           <span>© 2026 HireMind AI. All rights reserved.</span>
-
           <span>Built for better interviews.</span>
         </div>
       </footer>

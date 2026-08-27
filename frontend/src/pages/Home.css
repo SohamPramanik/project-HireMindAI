@@ -1940,3 +1940,20 @@ footer {
 .feature-link {
   text-decoration: none;
 }
+.footer-socials {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.footer-socials a {
+  color: #8b8fa3;
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.footer-socials a:hover {
+  color: #6c4ce6;
+}
