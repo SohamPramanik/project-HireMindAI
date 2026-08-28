@@ -119,46 +119,6 @@ The platform aims to provide a more personalized preparation experience based on
 
 ---
 
-# 🖥️ Application Preview
-
-> 📸 Add screenshots of your project here to make your GitHub repository even more attractive.
-
-### 🏠 Home Page
-
-```text
-Modern Landing Page
-│
-├── Hero Section
-├── Features
-├── How It Works
-├── Why HireMind AI
-├── Call To Action
-└── Contact & Footer
-```
-
-### 🔐 Authentication
-
-```text
-User Authentication
-│
-├── Register
-├── Login
-└── Secure User Access
-```
-
-### 🤖 AI Experience
-
-```text
-Career Preparation
-│
-├── AI Assistance
-├── Interview Practice
-├── Career Guidance
-└── Smart Learning Experience
-```
-
----
-
 # 🛠️ Tech Stack
 
 ## 🎨 Frontend
